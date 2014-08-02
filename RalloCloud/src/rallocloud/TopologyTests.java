@@ -8,6 +8,7 @@ package rallocloud;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  *
  * @author Atakan
  */
-public class RalloCloud {
+public class TopologyTests {
 
     private static List<Cloudlet> cloudletList;
 
@@ -88,12 +89,18 @@ public class RalloCloud {
                 cloudletList.add(cloudlet1);
 
                 broker.submitCloudletList(cloudletList);
+                
+                /*NetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\sample.brite");
+                NetworkTopology.mapNode(broker.getId(), 0);
+                NetworkTopology.mapNode(datacenterA.getId(), 1);
+                NetworkTopology.mapNode(datacenterB.getId(), 2);*/
 
-                NetworkTopology.addLink(datacenterA.getId(),broker.getId(), 0.0, 0.0000000001);
-                NetworkTopology.addLink(datacenterB.getId(),broker.getId(), 0.0, 10.0000000001);
-                NetworkTopology.addLink(datacenterB.getId(),datacenterA.getId(), 0.0, 0.0000000001);
-              
-
+                NetworkTopology.addLink(datacenterA.getId(), broker.getId(), 0.0, 0.0);
+                NetworkTopology.addLink(datacenterB.getId(), broker.getId(), 0.0, 1.1);
+                NetworkTopology.addLink(datacenterA.getId(), datacenterB.getId(), 0.0, 0.0);
+                
+                //System.out.println(Arrays.deepToString(NetworkTopology.getBwMatrix())); 
+                
                 CloudSim.startSimulation();
 
                 List<Cloudlet> newList = broker.getCloudletReceivedList();
@@ -103,6 +110,9 @@ public class RalloCloud {
                 printCloudletList(newList);
 
                 //System.out.println("FINISH");
+                DecimalFormat dft = new DecimalFormat("###.##");
+                System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(datacenterB.getId(), datacenterA.getId()))); 
+
             }
             catch (Exception e) {
                     e.printStackTrace();
@@ -206,7 +216,6 @@ public class RalloCloud {
                     System.out.println( indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getVmId() +
                                     indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())+
                                     indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
-                    
             }
         }
     }
