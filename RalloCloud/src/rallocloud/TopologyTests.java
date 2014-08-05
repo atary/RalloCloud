@@ -87,17 +87,19 @@ public class TopologyTests {
                 cloudlet1.setUserId(brokerId);
 
                 cloudletList.add(cloudlet1);
-
+                
                 broker.submitCloudletList(cloudletList);
                 
-                /*NetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\sample.brite");
-                NetworkTopology.mapNode(broker.getId(), 0);
+                //broker.bindCloudletToVm(cloudlet2.getCloudletId(),vm2.getId());
+                
+                NetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
+                NetworkTopology.mapNode(broker.getId(), 15);
                 NetworkTopology.mapNode(datacenterA.getId(), 1);
-                NetworkTopology.mapNode(datacenterB.getId(), 2);*/
+                NetworkTopology.mapNode(datacenterB.getId(), 12);
 
-                NetworkTopology.addLink(datacenterA.getId(), broker.getId(), 0.0, 0.0);
-                NetworkTopology.addLink(datacenterB.getId(), broker.getId(), 0.0, 1.1);
-                NetworkTopology.addLink(datacenterA.getId(), datacenterB.getId(), 0.0, 0.0);
+                //NetworkTopology.addLink(datacenterA.getId(), broker.getId(), 0.0, 0.0);
+                //NetworkTopology.addLink(datacenterB.getId(), broker.getId(), 0.0, 1.1);
+                //NetworkTopology.addLink(datacenterA.getId(), datacenterB.getId(), 0.0, 0.0);
                 
                 //System.out.println(Arrays.deepToString(NetworkTopology.getBwMatrix())); 
                 
@@ -111,7 +113,7 @@ public class TopologyTests {
 
                 //System.out.println("FINISH");
                 DecimalFormat dft = new DecimalFormat("###.##");
-                System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(datacenterB.getId(), datacenterA.getId()))); 
+                System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(broker.getId(), datacenterA.getId()))); 
 
             }
             catch (Exception e) {
