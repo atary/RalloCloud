@@ -6,6 +6,7 @@
 
 package rallocloud;
 
+import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,15 +106,19 @@ public class TopologyTests {
                 
                 CloudSim.startSimulation();
 
-                List<Cloudlet> newList = broker.getCloudletReceivedList();
-
+                List<Cloudlet> clList = broker.getCloudletReceivedList();
+                
+                List<Vm> vmList = broker.getVmList();
+                
                 CloudSim.stopSimulation();
-
-                printCloudletList(newList);
-
+                
+                printCloudletList(clList);
+                
+                printVmList(vmList);
+               
                 //System.out.println("FINISH");
-                DecimalFormat dft = new DecimalFormat("###.##");
-                System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(broker.getId(), datacenterA.getId()))); 
+                //DecimalFormat dft = new DecimalFormat("###.##");
+                //System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(broker.getId(), datacenterA.getId()))); 
 
             }
             catch (Exception e) {
@@ -204,7 +209,7 @@ public class TopologyTests {
 
         String indent = "\t\t";
         System.out.println();
-        System.out.println("========== OUTPUT ==========");
+        System.out.println("========== CLOUDLETS ==========");
         System.out.println("CL ID" + indent + "STATUS" + indent +
                         "DC Name" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "User ID");
 
@@ -219,6 +224,18 @@ public class TopologyTests {
                                     indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())+
                                     indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
             }
+        }
+    }
+    
+    private static void printVmList(List<Vm> list){
+        String indent = "\t\t";
+        System.out.println();
+        System.out.println("========== VMs ==========");
+        System.out.println("VM ID" + indent + "User ID" + indent +
+                        "Host ID" + indent + "DC ID" + indent + "DC Name" + indent + "Start" + indent + "Finish" + indent + "User ID");
+        for(Vm v : list){
+            System.out.println(v.getCurrentAllocatedRam());
+            //System.out.println(v.getId() + indent + v.getUserId() + indent + v.getHost().getId() + indent + v.getHost().getDatacenter().getId() + indent + v.getHost().getDatacenter().getName());
         }
     }
 }
