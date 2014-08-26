@@ -21,6 +21,7 @@ import toools.set.IntArrayListSet;
 public class Visualizer {
     public static void emptyTopology(double[][] bwMatrix, ArrayList<String> labels, ArrayList<Integer>... highlight){
         Grph g = new InMemoryGrph();
+        
         for(int i = 0; i < bwMatrix.length; i++){
             g.addVertex(i);
             g.getVertexLabelProperty().setValue(i, labels.get(i));
@@ -50,7 +51,7 @@ public class Visualizer {
         for(int i = 0; i < bwMatrix.length; i++){
             g.addVertex(i);
             g.getVertexLabelProperty().setValue(i, labels.get(i));
-            g.getVertexSizeProperty().setValue(i, 20);
+            g.getVertexSizeProperty().setValue(i, 15);
         }
         for(int i = 0; i < bwMatrix.length; i++){
             for(int j = 0; j < i; j++){
@@ -64,6 +65,7 @@ public class Visualizer {
         for(ArrayList<Integer> h : highlight){
             for(int v1 : h){
                 g.highlightVertex(v1, color);
+                g.getVertexSizeProperty().setValue(v1, 25);
                 for(int v2 : h){
                     Path p = g.getShortestPath(v1, v2);
                     for(int i=0; i<p.getLength(); i++){

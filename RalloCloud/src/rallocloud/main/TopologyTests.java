@@ -8,6 +8,7 @@ package rallocloud.main;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,7 +104,9 @@ public class TopologyTests {
                 ArrayList<Integer> excluded = new ArrayList<>();
                 excluded.add(14);
                 
-                //Visualizer.displayTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+                //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+                
+                System.out.println(Arrays.deepToString(MyNetworkTopology.getBwMatrix()));
                 
                 CloudSim.startSimulation();
 
