@@ -93,10 +93,44 @@ public class TopologyTests {
                 
                 //broker.bindCloudletToVm(cloudlet2.getCloudletId(),vm2.getId());
                 
-                NetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
-                NetworkTopology.mapNode(broker.getId(), 15);
-                NetworkTopology.mapNode(datacenterA.getId(), 1);
-                NetworkTopology.mapNode(datacenterB.getId(), 12);
+                MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
+                MyNetworkTopology.mapNode(broker.getId(), 15);
+                MyNetworkTopology.mapNode(datacenterA.getId(), 1);
+                MyNetworkTopology.mapNode(datacenterB.getId(), 12);
+                
+                ArrayList<Integer> brokers = new ArrayList<>();
+                brokers.add(15);
+                brokers.add(16);
+                
+                ArrayList<Integer> cores = new ArrayList<>();
+                cores.add(0);
+                cores.add(1);
+                cores.add(2);
+                cores.add(3);
+                
+                ArrayList<Integer> excluded = new ArrayList<>();
+                excluded.add(14);
+                
+                ArrayList<String> labels = new ArrayList<>();
+                labels.add("GARR");
+                labels.add("DFN");
+                labels.add("CESNET");
+                labels.add("PSNC");
+                labels.add("FCCN");
+                labels.add("GRNET");
+                labels.add("HEANET");
+                labels.add("I2CAT");
+                labels.add("ICCS");
+                labels.add("KTH");
+                labels.add("NIIF");
+                labels.add("PSNC-2");
+                labels.add("RedIRIS");
+                labels.add("SWITCH");
+                labels.add("NORDUNET");
+                labels.add("BROKER1");
+                labels.add("BROKER2");
+                
+                Visualizer.display(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
 
                 //NetworkTopology.addLink(datacenterA.getId(), broker.getId(), 0.0, 0.0);
                 //NetworkTopology.addLink(datacenterB.getId(), broker.getId(), 0.0, 1.1);
