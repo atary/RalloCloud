@@ -6,10 +6,8 @@
 
 package rallocloud.main;
 
-import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,63 +51,6 @@ public class TopologyTests {
                 boolean trace_flag = false;
 
                 CloudSim.init(num_user, calendar, trace_flag);
-
-                Datacenter datacenterA = createDatacenter("A",150,16384,1000000,1000);
-                Datacenter datacenterB = createDatacenter("B",1500,16384,1000000,1000);
-
-                DatacenterBroker broker = createBroker();
-                int brokerId = broker.getId();
-
-                vmlist = new ArrayList<Vm>();
-
-                int vmid = 0;
-                int mips = 1500;
-                long size = 10000; //image size (MB)
-                int ram = 512; //vm memory (MB)
-                long bw = 1000;
-                int pesNumber = 1; //number of cpus
-                String vmm = "Xen"; //VMM name
-
-                Vm vm1 = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
-
-                vmlist.add(vm1);
-
-                broker.submitVmList(vmlist);
-
-                cloudletList = new ArrayList<Cloudlet>();
-
-                int id = 0;
-                long length = 30000;
-                long fileSize = 300;
-                long outputSize = 300;
-                UtilizationModel utilizationModel = new UtilizationModelFull();
-
-                Cloudlet cloudlet1 = new Cloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
-                cloudlet1.setUserId(brokerId);
-
-                cloudletList.add(cloudlet1);
-                
-                broker.submitCloudletList(cloudletList);
-                
-                //broker.bindCloudletToVm(cloudlet2.getCloudletId(),vm2.getId());
-                
-                MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
-                MyNetworkTopology.mapNode(broker.getId(), 15);
-                MyNetworkTopology.mapNode(datacenterA.getId(), 1);
-                MyNetworkTopology.mapNode(datacenterB.getId(), 12);
-                
-                ArrayList<Integer> brokers = new ArrayList<>();
-                brokers.add(15);
-                brokers.add(16);
-                
-                ArrayList<Integer> cores = new ArrayList<>();
-                cores.add(0);
-                cores.add(1);
-                cores.add(2);
-                cores.add(3);
-                
-                ArrayList<Integer> excluded = new ArrayList<>();
-                excluded.add(14);
                 
                 ArrayList<String> labels = new ArrayList<>();
                 labels.add("GARR");
@@ -130,25 +71,66 @@ public class TopologyTests {
                 labels.add("BROKER1");
                 labels.add("BROKER2");
                 
-                Visualizer.display(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
-
-                //NetworkTopology.addLink(datacenterA.getId(), broker.getId(), 0.0, 0.0);
-                //NetworkTopology.addLink(datacenterB.getId(), broker.getId(), 0.0, 1.1);
-                //NetworkTopology.addLink(datacenterA.getId(), datacenterB.getId(), 0.0, 0.0);
+                MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
                 
-                //System.out.println(Arrays.deepToString(NetworkTopology.getBwMatrix())); 
+                ArrayList<Datacenter> dcList = new ArrayList<>();
+                for(int i = 0; i < 14; i++){
+                    Datacenter dc = createDatacenter(labels.get(i), 1500, 16384, 1000000, 1000);
+                    dcList.add(dc);
+                    MyNetworkTopology.mapNode(dc.getId(), i);
+                }
+                
+                DatacenterBroker broker1 = createBroker();
+                DatacenterBroker broker2 = createBroker();
+                
+                createLoad(broker1, 3);
+                
+                createLoad(broker2, 2);
+                
+                MyNetworkTopology.mapNode(broker1.getId(), 15);
+                MyNetworkTopology.mapNode(broker2.getId(), 16);
+                
+                ArrayList<Integer> brokers = new ArrayList<>();
+                brokers.add(15);
+                brokers.add(16);
+                
+                ArrayList<Integer> cores = new ArrayList<>();
+                cores.add(0);
+                cores.add(1);
+                cores.add(2);
+                cores.add(3);
+                
+                ArrayList<Integer> excluded = new ArrayList<>();
+                excluded.add(14);
+                
+                //Visualizer.displayTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
                 
                 CloudSim.startSimulation();
 
-                List<Cloudlet> clList = broker.getCloudletReceivedList();
+                List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
+                List<Cloudlet> clList2 = broker2.getCloudletReceivedList();
                 
-                List<Vm> vmList = broker.getVmList();
+                //List<Vm> vmList = broker1.getVmList();
                 
                 CloudSim.stopSimulation();
                 
-                printCloudletList(clList);
+                printCloudletList(clList1);
+                printCloudletList(clList2);
+                               
+                ArrayList<Integer> dcIdList1 = new ArrayList<>();
+                ArrayList<Integer> dcIdList2 = new ArrayList<>();
                 
-                printVmList(vmList);
+                for(Cloudlet c : clList1) dcIdList1.add(c.getResourceId()-2);
+                for(Cloudlet c : clList2) dcIdList2.add(c.getResourceId()-2);
+                
+                ArrayList<Integer> b1 = new ArrayList<>();
+                b1.add(15);
+                ArrayList<Integer> b2 = new ArrayList<>();
+                b2.add(16);
+                
+                Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
+                
+                //printVmList(vmList);
                
                 //System.out.println("FINISH");
                 //DecimalFormat dft = new DecimalFormat("###.##");
@@ -159,6 +141,40 @@ public class TopologyTests {
                     e.printStackTrace();
                     System.out.println("The simulation has been terminated due to an unexpected error");
             }
+    }
+    
+    private static void createLoad(DatacenterBroker broker, int count){
+        int brokerId = broker.getId();
+        int vmid = 0;
+        int cloudletid = 0;
+        for(int i=0; i < count; i++){
+            
+            int mips = 1500;
+            long size = 10000; //image size (MB)
+            int ram = 512; //vm memory (MB)
+            long bw = 100;
+            int pesNumber = 1; //number of cpus
+            String vmm = "Xen"; //VMM name
+
+            Vm virtualMachine = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
+
+            broker.getVmList().add(virtualMachine);
+
+            long length = 30000;
+            long fileSize = 300;
+            long outputSize = 300;
+            UtilizationModel utilizationModel = new UtilizationModelFull();
+
+            Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+            application.setUserId(brokerId);
+
+            broker.getCloudletList().add(application);
+
+            broker.bindCloudletToVm(application.getCloudletId(),virtualMachine.getId());
+            
+            vmid++;
+            cloudletid++;
+        }
     }
 
     private static Datacenter createDatacenter(String name, int mips, int ram, long storage, int bw){
