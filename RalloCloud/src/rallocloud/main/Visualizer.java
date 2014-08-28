@@ -6,9 +6,7 @@
 
 package rallocloud.main;
 
-import brite.Graph.Edge;
 import grph.Grph;
-import grph.gui.GraphstreamBasedRenderer;
 import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
 import java.util.ArrayList;
@@ -24,7 +22,8 @@ public class Visualizer {
         
         for(int i = 0; i < bwMatrix.length; i++){
             g.addVertex(i);
-            g.getVertexLabelProperty().setValue(i, labels.get(i));
+            if(labels.size()>0)
+                g.getVertexLabelProperty().setValue(i, labels.get(i));
             g.getVertexSizeProperty().setValue(i, 20);
         }
         for(int i = 0; i < bwMatrix.length; i++){
@@ -42,7 +41,6 @@ public class Visualizer {
             g.highlight(g.getSubgraphInducedByVertices(hl), color);
             color++;
         }
-        
         g.display();
     }
     
@@ -50,8 +48,8 @@ public class Visualizer {
         Grph g = new InMemoryGrph();
         for(int i = 0; i < bwMatrix.length; i++){
             g.addVertex(i);
-            g.getVertexLabelProperty().setValue(i, labels.get(i));
-            g.getVertexSizeProperty().setValue(i, 15);
+            g.getVertexLabelProperty().setValue(i, labels.get(i) + " ("+i+")");
+            g.getVertexSizeProperty().setValue(i, 20);
         }
         for(int i = 0; i < bwMatrix.length; i++){
             for(int j = 0; j < i; j++){
@@ -70,13 +68,12 @@ public class Visualizer {
                     Path p = g.getShortestPath(v1, v2);
                     for(int i=0; i<p.getLength(); i++){
                         g.highlightEdges(g.getEdgesConnecting(p.getVertexAt(i), p.getVertexAt(i+1)), color);
+                        g.getEdgeWidthProperty().setValue(g.getEdgesConnecting(p.getVertexAt(i), p.getVertexAt(i+1)).getGreatest(), 2);
                     }
                 }
             }
             color++;
-        }
-        
+        }   
         g.display();
-    }
-    
+    }   
 }

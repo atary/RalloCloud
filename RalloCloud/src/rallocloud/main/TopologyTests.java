@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
@@ -31,6 +30,8 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.python.apache.xerces.dom.DeepNodeListImpl;
+import org.python.google.common.collect.HashBiMap;
 
 /**
  *
@@ -47,6 +48,9 @@ public class TopologyTests {
             //System.out.println("START");
 
             try {
+                
+                HashBiMap<Integer, Integer> simGrphMap = HashBiMap.create(); //Key: cloudsim id, Value: grph id
+                
                 int num_user = 1; 
                 Calendar calendar = Calendar.getInstance();
                 boolean trace_flag = false;
@@ -75,21 +79,26 @@ public class TopologyTests {
                 MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
                 
                 ArrayList<Datacenter> dcList = new ArrayList<>();
+                
                 for(int i = 0; i < 14; i++){
                     Datacenter dc = createDatacenter(labels.get(i), 1500, 16384, 1000000, 1000);
                     dcList.add(dc);
                     MyNetworkTopology.mapNode(dc.getId(), i);
+                    simGrphMap.put(dc.getId(), i);
                 }
                 
                 DatacenterBroker broker1 = createBroker();
                 DatacenterBroker broker2 = createBroker();
                 
-                createLoad(broker1, 3);
+                double[][] loadTopology1 = createLoad(broker1, 3);
+                double[][] loadTopology2 = createLoad(broker2, 2);
                 
-                createLoad(broker2, 2);
+                Visualizer.emptyTopology(loadTopology2, new ArrayList<String>());
                 
                 MyNetworkTopology.mapNode(broker1.getId(), 15);
+                simGrphMap.put(broker1.getId(), 15);
                 MyNetworkTopology.mapNode(broker2.getId(), 16);
+                simGrphMap.put(broker2.getId(), 16);                
                 
                 ArrayList<Integer> brokers = new ArrayList<>();
                 brokers.add(15);
@@ -105,9 +114,7 @@ public class TopologyTests {
                 excluded.add(14);
                 
                 //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
-                
-                System.out.println(Arrays.deepToString(MyNetworkTopology.getBwMatrix()));
-                
+                                
                 CloudSim.startSimulation();
 
                 List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
@@ -123,13 +130,13 @@ public class TopologyTests {
                 ArrayList<Integer> dcIdList1 = new ArrayList<>();
                 ArrayList<Integer> dcIdList2 = new ArrayList<>();
                 
-                for(Cloudlet c : clList1) dcIdList1.add(c.getResourceId()-2);
-                for(Cloudlet c : clList2) dcIdList2.add(c.getResourceId()-2);
+                for(Cloudlet c : clList1) dcIdList1.add(simGrphMap.get(c.getResourceId()));
+                for(Cloudlet c : clList2) dcIdList2.add(simGrphMap.get(c.getResourceId()));
                 
                 ArrayList<Integer> b1 = new ArrayList<>();
-                b1.add(15);
+                b1.add(simGrphMap.get(broker1.getId()));
                 ArrayList<Integer> b2 = new ArrayList<>();
-                b2.add(16);
+                b2.add(simGrphMap.get(broker2.getId()));
                 
                 Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
                 
@@ -146,12 +153,11 @@ public class TopologyTests {
             }
     }
     
-    private static void createLoad(DatacenterBroker broker, int count){
+    private static double[][] createLoad(DatacenterBroker broker, int count){
         int brokerId = broker.getId();
         int vmid = 0;
         int cloudletid = 0;
-        for(int i=0; i < count; i++){
-            
+        for(int i=0; i < count; i++){         
             int mips = 1500;
             long size = 10000; //image size (MB)
             int ram = 512; //vm memory (MB)
@@ -178,6 +184,18 @@ public class TopologyTests {
             vmid++;
             cloudletid++;
         }
+        double[][] topology = new double[count][count];
+        
+        for(int i = 0; i < count; i++) for(int j = 0; j < count; j++) topology[i][j] = 0.0;
+        
+        for(int i = 0; i < count-1; i++){
+            topology[i][i+1] = 1.0;
+            topology[i+1][i] = 1.0;
+        }
+
+        System.out.println(Arrays.deepToString(topology));
+        
+        return topology;
     }
 
     private static Datacenter createDatacenter(String name, int mips, int ram, long storage, int bw){
