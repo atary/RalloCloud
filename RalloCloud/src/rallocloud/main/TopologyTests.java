@@ -25,6 +25,7 @@ import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
+import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
@@ -81,7 +82,7 @@ public class TopologyTests {
                 ArrayList<Datacenter> dcList = new ArrayList<>();
                 
                 for(int i = 0; i < 14; i++){
-                    Datacenter dc = createDatacenter(labels.get(i), 1500, 16384, 1000000, 1000);
+                    Datacenter dc = createDatacenter(labels.get(i), 3000, 16384, 1000000, 1000);
                     dcList.add(dc);
                     MyNetworkTopology.mapNode(dc.getId(), i);
                     simGrphMap.put(dc.getId(), i);
