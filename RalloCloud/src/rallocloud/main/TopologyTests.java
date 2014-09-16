@@ -49,7 +49,7 @@ public class TopologyTests {
             //System.out.println("START");
 
             try {
-                
+                Statistician.setSize(0);
                 HashBiMap<Integer, Integer> simGrphMap = HashBiMap.create(); //Key: cloudsim id, Value: grph id
                 
                 int num_user = 1; 
@@ -88,13 +88,14 @@ public class TopologyTests {
                     simGrphMap.put(dc.getId(), i);
                 }
                 
-                DatacenterBroker broker1 = createBroker();
-                DatacenterBroker broker2 = createBroker();
+                MyDatacenterBroker.i = 0;
+                MyDatacenterBroker broker1 = createBroker();
+                MyDatacenterBroker broker2 = createBroker();
                 
                 double[][] loadTopology1 = createLoad(broker1, 3);
                 double[][] loadTopology2 = createLoad(broker2, 2);
                 
-                Visualizer.emptyTopology(loadTopology2, new ArrayList<String>());
+                //Visualizer.emptyTopology(loadTopology2, new ArrayList<String>());
                 
                 MyNetworkTopology.mapNode(broker1.getId(), 15);
                 simGrphMap.put(broker1.getId(), 15);
@@ -125,8 +126,10 @@ public class TopologyTests {
                 
                 CloudSim.stopSimulation();
                 
-                printCloudletList(clList1);
-                printCloudletList(clList2);
+                List<Cloudlet> clList = new ArrayList<Cloudlet>(clList1);
+                clList.addAll(clList2);
+                
+                printCloudletList(clList);
                                
                 ArrayList<Integer> dcIdList1 = new ArrayList<>();
                 ArrayList<Integer> dcIdList2 = new ArrayList<>();
@@ -159,7 +162,7 @@ public class TopologyTests {
         int vmid = 0;
         int cloudletid = 0;
         for(int i=0; i < count; i++){         
-            int mips = 1500;
+            int mips = 3000;
             long size = 10000; //image size (MB)
             int ram = 512; //vm memory (MB)
             long bw = 100;
@@ -259,11 +262,11 @@ public class TopologyTests {
 
     //We strongly encourage users to develop their own broker policies, to submit vms and cloudlets according
     //to the specific rules of the simulated scenario
-    private static DatacenterBroker createBroker(){
+    private static MyDatacenterBroker createBroker(){
 
-        DatacenterBroker broker = null;
+        MyDatacenterBroker broker = null;
         try {
-                broker = new DatacenterBroker("Broker");
+                broker = new MyDatacenterBroker("Broker");
         } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -283,20 +286,36 @@ public class TopologyTests {
         System.out.println();
         System.out.println("========== CLOUDLETS ==========");
         System.out.println("CL ID" + indent + "STATUS" + indent +
-                        "DC Name" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "User ID");
-
+                        "DC Name" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");
+        double AUL = 0;
+        double MUL = 0;
+        double JRT = 0;
+        double JCT = 0;
+        DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = list.get(i);
             System.out.print(cloudlet.getCloudletId() + indent);
 
-            if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS){
-                    System.out.print("SUCCESS");
-                    DecimalFormat dft = new DecimalFormat("###.##");
-                    System.out.println( indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getVmId() +
+            //if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS){
+                    System.out.print(cloudlet.getCloudletStatus()==Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
+                    System.out.println( indent + cloudlet.getResourceName(cloudlet.getResourceId()) + cloudlet.getResourceId() + indent + cloudlet.getVmId() +
                                     indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())+
                                     indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
-            }
+                    AUL += cloudlet.getExecStartTime();
+                    JRT += 1000000 * cloudlet.getActualCPUTime() / cloudlet.getCloudletLength();
+                    JCT += cloudlet.getFinishTime();
+                    if(cloudlet.getExecStartTime() > MUL) MUL = cloudlet.getExecStartTime();
+            //}
         }
+        
+        System.out.println();
+        System.out.println("=========== METRICS ===========");
+        
+        System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL/size) + " s");
+        System.out.println("Average User Latency (AUL)\t: \t" + dft.format(MUL) + " s");
+        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
+        System.out.println("Job Run Tim (JRT)\t\t: \t" + dft.format(JRT/size) + " s/1M inst.");
+        System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT/size) + " s");
     }
     
     private static void printVmList(List<Vm> list){

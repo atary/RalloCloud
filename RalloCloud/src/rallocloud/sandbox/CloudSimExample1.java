@@ -92,7 +92,7 @@ public class CloudSimExample1 {
 
                         // VM description
                         int vmid = 0;
-                        int mips = 1000;
+                        int mips = 2000;
                         long size = 10000; // image size (MB)
                         int ram = 512; // vm memory (MB)
                         long bw = 1000;
@@ -100,8 +100,8 @@ public class CloudSimExample1 {
                         String vmm = "Xen"; // VMM name
 
                         // create VM
-                        Vm vm = new Vm(0, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared());
-                        Vm vm2 = new Vm(1, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared());
+                        Vm vm = new Vm(0, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
+                        Vm vm2 = new Vm(1, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
                         
                         // add the VM to the vmList
                         vmlist.add(vm);
@@ -189,7 +189,7 @@ public class CloudSimExample1 {
                                 new BwProvisionerSimple(bw),
                                 storage,
                                 peList,
-                                new VmSchedulerSpaceShared(peList)
+                                new VmSchedulerTimeShared(peList)
                         )
                 ); // This is our machine
 
