@@ -6,6 +6,7 @@
 
 package rallocloud.main;
 
+import rallocloud.main.assignment.AssignmentStrategyWrapper;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,14 +89,14 @@ public class TopologyTests {
                     simGrphMap.put(dc.getId(), i);
                 }
                 
-                MyDatacenterBroker.i = 0;
-                MyDatacenterBroker broker1 = createBroker();
-                MyDatacenterBroker broker2 = createBroker();
+                AssignmentStrategyWrapper.i = 0;
+                AssignmentStrategyWrapper broker1 = createBroker();
+                AssignmentStrategyWrapper broker2 = createBroker();
                 
                 double[][] loadTopology1 = createLoad(broker1, 3);
                 double[][] loadTopology2 = createLoad(broker2, 2);
                 
-                //Visualizer.emptyTopology(loadTopology2, new ArrayList<String>());
+                Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
                 
                 MyNetworkTopology.mapNode(broker1.getId(), 15);
                 simGrphMap.put(broker1.getId(), 15);
@@ -262,11 +263,11 @@ public class TopologyTests {
 
     //We strongly encourage users to develop their own broker policies, to submit vms and cloudlets according
     //to the specific rules of the simulated scenario
-    private static MyDatacenterBroker createBroker(){
+    private static AssignmentStrategyWrapper createBroker(){
 
-        MyDatacenterBroker broker = null;
+        AssignmentStrategyWrapper broker = null;
         try {
-                broker = new MyDatacenterBroker("Broker");
+                broker = new AssignmentStrategyWrapper("Broker");
         } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -312,7 +313,7 @@ public class TopologyTests {
         System.out.println("=========== METRICS ===========");
         
         System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL/size) + " s");
-        System.out.println("Average User Latency (AUL)\t: \t" + dft.format(MUL) + " s");
+        System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + " s");
         System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
         System.out.println("Job Run Tim (JRT)\t\t: \t" + dft.format(JRT/size) + " s/1M inst.");
         System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT/size) + " s");
