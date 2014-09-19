@@ -21,10 +21,8 @@ import rallocloud.main.Statistician;
  * Latency based first fit
  * @author Atakan
  */
-public class LFFDatacenterBroker extends org.cloudbus.cloudsim.DatacenterBroker{
+public class LFFDatacenterBroker extends BrokerStrategy{
     
-    public static int i;
-
     public LFFDatacenterBroker(String name) throws Exception {
         super(name);
     }

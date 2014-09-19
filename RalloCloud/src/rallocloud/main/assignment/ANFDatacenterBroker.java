@@ -18,10 +18,8 @@ import org.cloudbus.cloudsim.core.SimEvent;
  * Arbitrary next fit
  * @author Atakan
  */
-public class ANFDatacenterBroker extends org.cloudbus.cloudsim.DatacenterBroker{
-    
-    public static int i;
-    
+public class ANFDatacenterBroker extends BrokerStrategy{
+        
     public ANFDatacenterBroker(String name) throws Exception{
         super(name);
     }

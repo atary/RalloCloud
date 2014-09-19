@@ -14,7 +14,7 @@ import org.cloudbus.cloudsim.core.SimEvent;
  *
  * @author Atakan
  */
-public class RANDatacenterBroker extends AssignmentStrategy{
+public class RANDatacenterBroker extends BrokerStrategy{
 
     public RANDatacenterBroker(String name) throws Exception {
         super(name);

@@ -9,9 +9,9 @@ package rallocloud.main.assignment;
  *
  * @author Atakan
  */
-public class AssignmentStrategyWrapper extends RANDatacenterBroker{
+public class AFFDatacenterBroker extends BrokerStrategy{
 
-    public AssignmentStrategyWrapper(String name) throws Exception {
+    public AFFDatacenterBroker(String name) throws Exception {
         super(name);
     }
     

@@ -16,11 +16,11 @@ import rallocloud.main.Statistician;
  *
  * @author Atakan
  */
-public class AssignmentStrategy extends org.cloudbus.cloudsim.DatacenterBroker{
+public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker{
     
     public static int i;
     
-    public AssignmentStrategy(String name) throws Exception {
+    public BrokerStrategy(String name) throws Exception {
         super(name);
     }
     

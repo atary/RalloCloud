@@ -6,7 +6,6 @@
 
 package rallocloud.main;
 
-import rallocloud.main.assignment.AssignmentStrategyWrapper;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,21 +18,19 @@ import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
-import org.cloudbus.cloudsim.NetworkTopology;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.python.apache.xerces.dom.DeepNodeListImpl;
 import org.python.google.common.collect.HashBiMap;
+import rallocloud.main.assignment.*;
 
 /**
  *
@@ -89,9 +86,9 @@ public class TopologyTests {
                     simGrphMap.put(dc.getId(), i);
                 }
                 
-                AssignmentStrategyWrapper.i = 0;
-                AssignmentStrategyWrapper broker1 = createBroker();
-                AssignmentStrategyWrapper broker2 = createBroker();
+                BrokerStrategy.i = 0;
+                BrokerStrategy broker1 = createBroker();
+                BrokerStrategy broker2 = createBroker();
                 
                 double[][] loadTopology1 = createLoad(broker1, 3);
                 double[][] loadTopology2 = createLoad(broker2, 2);
@@ -261,20 +258,6 @@ public class TopologyTests {
         return datacenter;
     }
 
-    //We strongly encourage users to develop their own broker policies, to submit vms and cloudlets according
-    //to the specific rules of the simulated scenario
-    private static AssignmentStrategyWrapper createBroker(){
-
-        AssignmentStrategyWrapper broker = null;
-        try {
-                broker = new AssignmentStrategyWrapper("Broker");
-        } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-        }
-        return broker;
-    }
-
     /**
      * Prints the Cloudlet objects
      * @param list  list of Cloudlets
@@ -329,5 +312,17 @@ public class TopologyTests {
             System.out.println(v.getCurrentAllocatedRam());
             //System.out.println(v.getId() + indent + v.getUserId() + indent + v.getHost().getId() + indent + v.getHost().getDatacenter().getId() + indent + v.getHost().getDatacenter().getName());
         }
+    }
+    
+    private static BrokerStrategy createBroker(){
+
+        BrokerStrategy broker;
+        try {
+                broker = new AFFDatacenterBroker("Broker");
+        } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+        }
+        return broker;
     }
 }
