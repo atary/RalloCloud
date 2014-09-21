@@ -19,34 +19,35 @@ import rallocloud.main.Statistician;
 
 /**
  * Latency based first fit
+ *
  * @author Atakan
  */
-public class LFFDatacenterBroker extends BrokerStrategy{
-    
+public class LFFDatacenterBroker extends BrokerStrategy {
+
     public LFFDatacenterBroker(String name) throws Exception {
         super(name);
     }
-    
+
     @Override
     protected void processResourceCharacteristics(SimEvent ev) {
-            DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
-            getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
+        DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
+        getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
 
-            if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
-                    setDatacenterRequestedIdsList(new ArrayList<Integer>());
-                    createVmsInDatacenter(getDatacenterIdsList(),-1);
-            }
+        if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
+            setDatacenterRequestedIdsList(new ArrayList<Integer>());
+            createVmsInDatacenter(getDatacenterIdsList(), -1);
+        }
     }
-    
+
     protected void createVmsInDatacenter(List<Integer> datacenterIds, int rejectedId) {
         int requestedVms = 0;
         getDatacenterRequestedIdsList().add(rejectedId);
         for (Vm vm : getVmList()) {
             double minDelay = Double.MAX_VALUE;
             int datacenterId = -1;
-            for(int dcId : datacenterIds){
+            for (int dcId : datacenterIds) {
                 double delay = MyNetworkTopology.getDelay(dcId, vm.getUserId());
-                if(delay < minDelay && !getDatacenterRequestedIdsList().contains(dcId)){
+                if (delay < minDelay && !getDatacenterRequestedIdsList().contains(dcId)) {
                     minDelay = delay;
                     datacenterId = dcId;
                 }
@@ -55,16 +56,16 @@ public class LFFDatacenterBroker extends BrokerStrategy{
             System.out.println(datacenterName);
             if (!getVmsToDatacentersMap().containsKey(vm.getId())) {
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
-                                + " in " + datacenterName);
+                        + " in " + datacenterName);
                 sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
                 requestedVms++;
-            } 
+            }
         }
 
         setVmsRequested(requestedVms);
         setVmsAcks(0);
     }
-    
+
     @Override
     protected void processVmCreate(SimEvent ev) {
         int[] data = (int[]) ev.getData();
@@ -76,11 +77,11 @@ public class LFFDatacenterBroker extends BrokerStrategy{
             getVmsToDatacentersMap().put(vmId, datacenterId);
             getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
             Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId
-                            + " has been created in Datacenter #" + datacenterId + ", Host #"
-                            + VmList.getById(getVmsCreatedList(), vmId).getHost().getId());
+                    + " has been created in Datacenter #" + datacenterId + ", Host #"
+                    + VmList.getById(getVmsCreatedList(), vmId).getHost().getId());
         } else {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId
-                            + " failed in Datacenter #" + datacenterId);
+                    + " failed in Datacenter #" + datacenterId);
             Statistician.rejected();
         }
 
@@ -88,7 +89,7 @@ public class LFFDatacenterBroker extends BrokerStrategy{
 
         // all the requested VMs have been created
         if (getVmsCreatedList().size() == getVmList().size() - getVmsDestroyed()) {
-                submitCloudlets();
+            submitCloudlets();
         } else {
             // all the acks received, but some VMs were not created
             if (getVmsRequested() == getVmsAcks()) {
@@ -97,11 +98,11 @@ public class LFFDatacenterBroker extends BrokerStrategy{
 
                 // all datacenters already queried
                 if (getVmsCreatedList().size() > 0) { // if some vm were created
-                        submitCloudlets();
+                    submitCloudlets();
                 } else { // no vms created. abort
-                        Log.printLine(CloudSim.clock() + ": " + getName()
-                                        + ": none of the required VMs could be created. Aborting");
-                        finishExecution();
+                    Log.printLine(CloudSim.clock() + ": " + getName()
+                            + ": none of the required VMs could be created. Aborting");
+                    finishExecution();
                 }
             }
         }

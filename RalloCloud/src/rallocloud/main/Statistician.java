@@ -10,7 +10,7 @@ package rallocloud.main;
  * @author Atakan
  */
 public class Statistician {
-    
+
     private static int RJR;
     private static int size;
 
@@ -19,14 +19,14 @@ public class Statistician {
     }
 
     public static double getRJR() {
-        return (double)RJR/size;
+        return (double) RJR / size;
     }
-    
-    public static void rejected(){
+
+    public static void rejected() {
         RJR++;
     }
-    
-    public static void trial(){
+
+    public static void trial() {
         size++;
     }
 }

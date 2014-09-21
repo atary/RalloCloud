@@ -9,10 +9,10 @@ package rallocloud.main.assignment;
  *
  * @author Atakan
  */
-public class AFFDatacenterBroker extends BrokerStrategy{
+public class AFFDatacenterBroker extends BrokerStrategy {
 
     public AFFDatacenterBroker(String name) throws Exception {
         super(name);
     }
-    
+
 }

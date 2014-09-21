@@ -14,21 +14,21 @@ import org.cloudbus.cloudsim.core.SimEvent;
  *
  * @author Atakan
  */
-public class RANDatacenterBroker extends BrokerStrategy{
+public class RANDatacenterBroker extends BrokerStrategy {
 
     public RANDatacenterBroker(String name) throws Exception {
         super(name);
     }
-    
+
     @Override
     protected void processResourceCharacteristics(SimEvent ev) {
         DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
         getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
 
         if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
-                setDatacenterRequestedIdsList(new ArrayList<Integer>());
-                Collections.shuffle(getDatacenterIdsList());
-                createVmsInDatacenter(getDatacenterIdsList().get(0));
+            setDatacenterRequestedIdsList(new ArrayList<Integer>());
+            Collections.shuffle(getDatacenterIdsList());
+            createVmsInDatacenter(getDatacenterIdsList().get(0));
         }
     }
 }

@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package rallocloud.main;
 
 /**
  *
  * @author Atakan
  */
-public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology{
-    public static double[][] getBwMatrix(){
+public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
+
+    public static double[][] getBwMatrix() {
         return bwMatrix;
     }
 }
