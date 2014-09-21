@@ -35,7 +35,7 @@ import rallocloud.main.assignment.*;
  *
  * @author Atakan
  */
-public class TopologyTests {
+public class RalloCloud {
 
     private static List<Cloudlet> cloudletList;
 
@@ -83,6 +83,11 @@ public class TopologyTests {
                 MyNetworkTopology.mapNode(dc.getId(), i);
                 simGrphMap.put(dc.getId(), i);
             }
+            
+            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0);
+            dcList.add(dc);
+            MyNetworkTopology.mapNode(dc.getId(), 14);
+            simGrphMap.put(dc.getId(), 14);
 
             BrokerStrategy.i = 0;
             BrokerStrategy broker1 = createBroker();
@@ -91,7 +96,7 @@ public class TopologyTests {
             double[][] loadTopology1 = createLoad(broker1, 3);
             double[][] loadTopology2 = createLoad(broker2, 2);
 
-            Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
+            //Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
 
             MyNetworkTopology.mapNode(broker1.getId(), 15);
             simGrphMap.put(broker1.getId(), 15);
@@ -111,7 +116,7 @@ public class TopologyTests {
             ArrayList<Integer> excluded = new ArrayList<>();
             excluded.add(14);
 
-            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
             CloudSim.startSimulation();
 
             List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
@@ -140,7 +145,7 @@ public class TopologyTests {
             ArrayList<Integer> b2 = new ArrayList<>();
             b2.add(simGrphMap.get(broker2.getId()));
 
-            Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
+            //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
 
             //printVmList(vmList);
             //System.out.println("FINISH");

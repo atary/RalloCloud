@@ -11,7 +11,8 @@ import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
- *
+ * Random
+ * 
  * @author Atakan
  */
 public class RANDatacenterBroker extends BrokerStrategy {

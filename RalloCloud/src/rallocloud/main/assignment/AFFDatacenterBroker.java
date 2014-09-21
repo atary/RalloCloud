@@ -6,6 +6,7 @@
 package rallocloud.main.assignment;
 
 /**
+ * Arbitrary first fit (cloudsim default, overridden only for consistency)
  *
  * @author Atakan
  */

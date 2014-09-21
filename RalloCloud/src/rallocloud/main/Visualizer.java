@@ -8,6 +8,7 @@ package rallocloud.main;
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import toools.set.IntArrayListSet;
 
@@ -23,7 +24,7 @@ public class Visualizer {
         for (int i = 0; i < bwMatrix.length; i++) {
             g.addVertex(i);
             if (labels.size() > 0) {
-                g.getVertexLabelProperty().setValue(i, labels.get(i));
+                g.getVertexLabelProperty().setValue(i, labels.get(i) + " (" + i + ")");
             }
             g.getVertexSizeProperty().setValue(i, 20);
         }
@@ -31,7 +32,8 @@ public class Visualizer {
             for (int j = 0; j < i; j++) {
                 if (bwMatrix[i][j] > 0) {
                     int e = g.addUndirectedSimpleEdge(i, j);
-                    g.getEdgeLabelProperty().setValue(e, String.valueOf(bwMatrix[i][j]) + "Mbit");
+                    DecimalFormat dft = new DecimalFormat("###.##");
+                    g.getEdgeLabelProperty().setValue(e, dft.format(MyNetworkTopology.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
                 }
             }
         }
@@ -58,7 +60,8 @@ public class Visualizer {
             for (int j = 0; j < i; j++) {
                 if (bwMatrix[i][j] > 0) {
                     int e = g.addUndirectedSimpleEdge(i, j);
-                    g.getEdgeLabelProperty().setValue(e, String.valueOf(bwMatrix[i][j]) + "Mbit");
+                    DecimalFormat dft = new DecimalFormat("###.##");
+                    g.getEdgeLabelProperty().setValue(e, dft.format(MyNetworkTopology.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
                 }
             }
         }

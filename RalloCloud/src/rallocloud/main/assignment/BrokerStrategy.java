@@ -13,7 +13,8 @@ import org.cloudbus.cloudsim.lists.VmList;
 import rallocloud.main.Statistician;
 
 /**
- *
+ * Base strategy that provide metric calculation
+ * 
  * @author Atakan
  */
 public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
