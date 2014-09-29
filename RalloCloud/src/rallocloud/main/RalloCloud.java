@@ -37,10 +37,6 @@ import rallocloud.main.assignment.*;
  */
 public class RalloCloud {
 
-    private static List<Cloudlet> cloudletList;
-
-    private static List<Vm> vmlist;
-
     public static void main(String[] args) {
 
         //System.out.println("START");
