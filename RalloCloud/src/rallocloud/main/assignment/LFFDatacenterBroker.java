@@ -53,7 +53,6 @@ public class LFFDatacenterBroker extends BrokerStrategy {
                 }
             }
             String datacenterName = CloudSim.getEntityName(datacenterId);
-            System.out.println(datacenterName);
             if (!getVmsToDatacentersMap().containsKey(vm.getId())) {
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
                         + " in " + datacenterName);

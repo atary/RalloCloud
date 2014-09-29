@@ -21,6 +21,7 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
+import org.cloudbus.cloudsim.UtilizationModelStochastic;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
@@ -79,7 +80,7 @@ public class RalloCloud {
                 simGrphMap.put(dc.getId(), i);
             }
             
-            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0);
+            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
             dcList.add(dc);
             MyNetworkTopology.mapNode(dc.getId(), 14);
             simGrphMap.put(dc.getId(), 14);
@@ -111,21 +112,24 @@ public class RalloCloud {
             ArrayList<Integer> excluded = new ArrayList<>();
             excluded.add(14);
 
-            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
-            System.out.println(Arrays.deepToString(MyNetworkTopology.getBwMatrix()));
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
             
             CloudSim.startSimulation();
 
-            List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
-            List<Cloudlet> clList2 = broker2.getCloudletReceivedList();
-
-            //List<Vm> vmList = broker1.getVmList();
+            List<Cloudlet> clList1 = broker1.getCloudletSubmittedList();
+            List<Cloudlet> clList2 = broker2.getCloudletSubmittedList();
+            
+            broker1.getVmList().get(0).getCurrentAllocatedBw();
+            
             CloudSim.stopSimulation();
-
+            
             List<Cloudlet> clList = new ArrayList<Cloudlet>(clList1);
             clList.addAll(clList2);
-
+            
             printCloudletList(clList);
+            
+            
+            //printVmList(vmList);
 
             ArrayList<Integer> dcIdList1 = new ArrayList<>();
             ArrayList<Integer> dcIdList2 = new ArrayList<>();
@@ -163,7 +167,7 @@ public class RalloCloud {
             String vmm = "Xen"; //VMM name
 
             Vm virtualMachine = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
-
+                       
             broker.getVmList().add(virtualMachine);
 
             long length = 30000;
@@ -193,8 +197,6 @@ public class RalloCloud {
             topology[i][i + 1] = 1.0;
             topology[i + 1][i] = 1.0;
         }
-
-        System.out.println(Arrays.deepToString(topology));
 
         return topology;
     }
@@ -259,10 +261,10 @@ public class RalloCloud {
     /**
      * Prints the Cloudlet objects
      *
-     * @param list list of Cloudlets
+     * @param clList list of Cloudlets
      */
-    private static void printCloudletList(List<Cloudlet> list) {
-        int size = list.size();
+    private static void printCloudletList(List<Cloudlet> clList) {
+        int size = clList.size();
         Cloudlet cloudlet;
 
         String indent = "\t\t";
@@ -274,12 +276,12 @@ public class RalloCloud {
         double MUL = 0;
         double JRT = 0;
         double JCT = 0;
+        double UTR = 0;
+        double UTRtime = 15;
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
-            cloudlet = list.get(i);
+            cloudlet = clList.get(i);
             System.out.print(cloudlet.getCloudletId() + indent);
-
-            //if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS){
             System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
             System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + cloudlet.getResourceId() + indent + cloudlet.getVmId()
                     + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
@@ -290,7 +292,6 @@ public class RalloCloud {
             if (cloudlet.getExecStartTime() > MUL) {
                 MUL = cloudlet.getExecStartTime();
             }
-            //}
         }
 
         System.out.println();
