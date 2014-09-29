@@ -111,7 +111,9 @@ public class RalloCloud {
             ArrayList<Integer> excluded = new ArrayList<>();
             excluded.add(14);
 
-            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+            System.out.println(Arrays.deepToString(MyNetworkTopology.getBwMatrix()));
+            
             CloudSim.startSimulation();
 
             List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
