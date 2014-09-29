@@ -11,6 +11,12 @@ package rallocloud.main;
  */
 public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
 
+    protected static double[][] bwUtilityMatrix = null;
+
+    public static double[][] getBwUtilityMatrix() {
+        return bwUtilityMatrix;
+    }
+
     public static double[][] getBwMatrix() {
         return bwMatrix;
     }

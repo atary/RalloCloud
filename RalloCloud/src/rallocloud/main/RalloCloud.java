@@ -39,12 +39,11 @@ public class RalloCloud {
 
     public static void main(String[] args) {
 
-        //System.out.println("START");
         try {
             Statistician.setSize(0);
             HashBiMap<Integer, Integer> simGrphMap = HashBiMap.create(); //Key: cloudsim id, Value: grph id
 
-            int num_user = 1;
+            int num_user = 2;
             Calendar calendar = Calendar.getInstance();
             boolean trace_flag = false;
 
@@ -143,10 +142,6 @@ public class RalloCloud {
 
             //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
 
-            //printVmList(vmList);
-            //System.out.println("FINISH");
-            //DecimalFormat dft = new DecimalFormat("###.##");
-            //System.out.println("Delay: " + dft.format(NetworkTopology.getDelay(broker.getId(), datacenterA.getId()))); 
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("The simulation has been terminated due to an unexpected error");
@@ -302,7 +297,7 @@ public class RalloCloud {
         System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + " s");
         System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + " s");
         System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
-        System.out.println("Job Run Tim (JRT)\t\t: \t" + dft.format(JRT / size) + " s/1M inst.");
+        System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + " s/1M inst.");
         System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + " s");
     }
 
