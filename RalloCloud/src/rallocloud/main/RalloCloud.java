@@ -112,7 +112,7 @@ public class RalloCloud {
             ArrayList<Integer> excluded = new ArrayList<>();
             excluded.add(14);
 
-            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
             CloudSim.startSimulation();
 
             List<Cloudlet> clList1 = broker1.getCloudletReceivedList();
@@ -322,7 +322,7 @@ public class RalloCloud {
 
         BrokerStrategy broker;
         try {
-            broker = new AFFDatacenterBroker("Broker");
+            broker = new LFFDatacenterBroker("Broker");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
