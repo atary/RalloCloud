@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
@@ -21,7 +22,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
-import org.cloudbus.cloudsim.UtilizationModelStochastic;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
@@ -128,6 +128,22 @@ public class RalloCloud {
             
             printCloudletList(clList);
             
+            //BEGIN DSF CALC
+            
+            HashSet<Integer> dcs1= new HashSet<Integer>();
+            for(Cloudlet c : clList1){
+                dcs1.add(c.getResourceId());
+            }
+            HashSet<Integer> dcs2= new HashSet<Integer>();
+            for(Cloudlet c : clList2){
+                dcs2.add(c.getResourceId());
+            }
+            
+            DecimalFormat dft = new DecimalFormat("###.##");
+            double DSF = ((double)dcs1.size() / (double)clList1.size()) + ((double)dcs2.size() / (double)clList2.size());
+            System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(DSF/2.0));
+            
+            //END DSF CALC
             
             //printVmList(vmList);
 
