@@ -313,7 +313,7 @@ public class RalloCloud {
 
         System.out.println();
         System.out.println("=========== METRICS ===========");
-
+//adsdaf
         System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + " s");
         System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + " s");
         System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
