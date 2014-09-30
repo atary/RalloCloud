@@ -86,6 +86,7 @@ public class RalloCloud {
             simGrphMap.put(dc.getId(), 14);
 
             BrokerStrategy.i = 0;
+            BrokerStrategy.dcList = dcList;
             BrokerStrategy broker1 = createBroker();
             BrokerStrategy broker2 = createBroker();
 
@@ -336,7 +337,7 @@ public class RalloCloud {
 
         BrokerStrategy broker;
         try {
-            broker = new LFFDatacenterBroker("Broker");
+            broker = new LBGDatacenterBroker("Broker");
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -5,6 +5,9 @@
  */
 package rallocloud.main.assignment;
 
+import java.util.ArrayList;
+import java.util.Map;
+import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
@@ -20,9 +23,15 @@ import rallocloud.main.Statistician;
 public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
 
     public static int i;
+    public static ArrayList<Datacenter> dcList;
 
-    public BrokerStrategy(String name) throws Exception {
+    public BrokerStrategy(String name) throws Exception { 
         super(name);
+    }
+    
+    @Override
+    public Map<Integer, Integer> getVmsToDatacentersMap(){
+        return vmsToDatacentersMap;
     }
 
     @Override
