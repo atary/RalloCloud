@@ -85,8 +85,8 @@ public class RalloCloud {
             MyNetworkTopology.mapNode(dc.getId(), 14);
             simGrphMap.put(dc.getId(), 14);
 
-            BrokerStrategy.i = 0;
-            BrokerStrategy.dcList = dcList;
+            //BrokerStrategy.i = 0;
+            //BrokerStrategy.dcList = dcList;
             BrokerStrategy broker1 = createBroker();
             BrokerStrategy broker2 = createBroker();
 
@@ -171,10 +171,11 @@ public class RalloCloud {
         }
     }
 
-    private static double[][] createLoad(DatacenterBroker broker, int count) {
+    private static double[][] createLoad(BrokerStrategy broker, int count) {
         int brokerId = broker.getId();
         int vmid = 0;
         int cloudletid = 0;
+        HashSet<Integer> group = new HashSet<>();
         for (int i = 0; i < count; i++) {
             int mips = 3000;
             long size = 10000; //image size (MB)
@@ -184,7 +185,7 @@ public class RalloCloud {
             String vmm = "Xen"; //VMM name
 
             Vm virtualMachine = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
-                       
+            group.add(vmid);
             broker.getVmList().add(virtualMachine);
 
             long length = 30000;
@@ -202,6 +203,8 @@ public class RalloCloud {
             vmid++;
             cloudletid++;
         }
+        broker.getVmGroups().add(group);
+        
         double[][] topology = new double[count][count];
 
         for (int i = 0; i < count; i++) {
@@ -336,7 +339,7 @@ public class RalloCloud {
 
         BrokerStrategy broker;
         try {
-            broker = new LBGDatacenterBroker("Broker");
+            broker = new AFFDatacenterBroker("Broker");
         } catch (Exception e) {
             e.printStackTrace();
             return null;

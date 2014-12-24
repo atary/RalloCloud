@@ -6,9 +6,13 @@
 package rallocloud.main.assignment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
@@ -20,18 +24,34 @@ import rallocloud.main.Statistician;
  * 
  * @author Atakan
  */
-public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
+public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
 
-    public static int i;
-    public static ArrayList<Datacenter> dcList;
+    //public static int i;
+    //public static ArrayList<Datacenter> dcList;
+    
+    protected Set<Set<Integer>> VmGroups;
+
+    public Set<Set<Integer>> getVmGroups() {
+        return VmGroups;
+    }
+
+    public void setVmGroups(Set<Set<Integer>> VmGroups) {
+        this.VmGroups = VmGroups;
+    }
 
     public BrokerStrategy(String name) throws Exception { 
         super(name);
+        VmGroups = new HashSet<>();
     }
-    
+
     @Override
-    public Map<Integer, Integer> getVmsToDatacentersMap(){
-        return vmsToDatacentersMap;
+    protected void processResourceCharacteristics(SimEvent ev) {
+            DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
+            getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
+            if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
+                //setDatacenterRequestedIdsList(new ArrayList<Integer>());
+                for(Set<Integer> g : VmGroups) createGroupVm(g);
+            }
     }
 
     @Override
@@ -51,6 +71,7 @@ public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId
                     + " failed in Datacenter #" + datacenterId);
             Statistician.rejected();
+            createSingleVm(vmId);
         }
 
         incrementVmsAcks();
@@ -58,7 +79,7 @@ public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
         // all the requested VMs have been created
         if (getVmsCreatedList().size() == getVmList().size() - getVmsDestroyed()) {
             submitCloudlets();
-        } else {
+        } /*else {
             // all the acks received, but some VMs were not created
             if (getVmsRequested() == getVmsAcks()) {
                 // find id of the next datacenter that has not been tried
@@ -78,6 +99,10 @@ public class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
                     finishExecution();
                 }
             }
-        }
+        } */
     }
+
+    protected abstract void createSingleVm(int id);
+
+    protected abstract void createGroupVm(Set<Integer> g);
 }
