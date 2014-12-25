@@ -5,7 +5,12 @@
  */
 package rallocloud.main.assignment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
@@ -20,36 +25,35 @@ import org.cloudbus.cloudsim.core.SimEvent;
  */
 public class ANFDatacenterBroker extends BrokerStrategy {
 
+    public static int i;
+
     public ANFDatacenterBroker(String name) throws Exception {
         super(name);
+        i = 0;
     }
 
     @Override
-    protected void processResourceCharacteristics(SimEvent ev) {
-        DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
-        getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
-
-        if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
-            //setDatacenterRequestedIdsList(new ArrayList<Integer>());
-            createVmsInDatacenter(getDatacenterIdsList());
-        }
+    protected void createSingleVm(int vmId) {
+        HashSet<Integer> hs = new HashSet<>();
+        hs.add(vmId);
+        createGroupVm(hs);
     }
 
-    protected void createVmsInDatacenter(List<Integer> datacenterIds) {
-        int requestedVms = 0;
-        for (Vm vm : getVmList()) {
-            int datacenterId = datacenterIds.get(i++ % datacenterIds.size());
-            String datacenterName = CloudSim.getEntityName(datacenterId);
-            if (!getVmsToDatacentersMap().containsKey(vm.getId())) {
-                Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
-                        + " in " + datacenterName);
-                sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
-                requestedVms++;
+    @Override
+    protected void createGroupVm(Set<Integer> g) {
+        for (int vmId : g) {
+            Vm vm = null;
+            for (Vm v : vmList) {
+                if (v.getId() == vmId) {
+                    vm = v;
+                }
             }
-            //getDatacenterRequestedIdsList().add(datacenterId);
-        }
 
-        setVmsRequested(requestedVms);
-        setVmsAcks(0);
+            int datacenterId = datacenterIdsList.get(i++ % datacenterIdsList.size());
+            String datacenterName = CloudSim.getEntityName(datacenterId);
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
+                    + " in " + datacenterName);
+            sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
+        }
     }
 }

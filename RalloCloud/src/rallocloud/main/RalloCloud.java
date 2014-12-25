@@ -339,7 +339,7 @@ public class RalloCloud {
 
         BrokerStrategy broker;
         try {
-            broker = new AFFDatacenterBroker("Broker");
+            broker = new ANFDatacenterBroker("Broker");
         } catch (Exception e) {
             e.printStackTrace();
             return null;

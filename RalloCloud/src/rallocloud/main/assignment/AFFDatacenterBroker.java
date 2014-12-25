@@ -21,9 +21,8 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
  * @author Atakan
  */
 public class AFFDatacenterBroker extends BrokerStrategy {
-    
-    protected Map<Integer,List<Integer>> datacenterRequestedIdsMap;
 
+    protected Map<Integer, List<Integer>> datacenterRequestedIdsMap;
 
     public AFFDatacenterBroker(String name) throws Exception {
         super(name);
@@ -33,16 +32,18 @@ public class AFFDatacenterBroker extends BrokerStrategy {
     @Override
     protected void createSingleVm(int vmId) {
         ArrayList<Integer> requestedDCs = new ArrayList<>();
-        if(datacenterRequestedIdsMap.get(vmId)!=null){
+        if (datacenterRequestedIdsMap.get(vmId) != null) {
             requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
         }
         Vm vm = null;
-        for(Vm v : vmList)
-            if(v.getId() == vmId)
-                vm=v;
-        for(int dcId : datacenterIdsList){
-            if(!requestedDCs.contains(dcId)){
-                setVmsRequested(getVmsRequested()+1);
+        for (Vm v : vmList) {
+            if (v.getId() == vmId) {
+                vm = v;
+            }
+        }
+        for (int dcId : datacenterIdsList) {
+            if (!requestedDCs.contains(dcId)) {
+                setVmsRequested(getVmsRequested() + 1);
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
                 sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
                 requestedDCs.add(dcId);
@@ -50,12 +51,15 @@ public class AFFDatacenterBroker extends BrokerStrategy {
                 return;
             }
         }
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": None of the datacenters are available for VM #" + vmId);
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": None of the datacenters were available for VM #" + vmId + ". Retrying...");
+
+        datacenterRequestedIdsMap.remove(vmId);
+        createSingleVm(vmId);
     }
 
     @Override
     protected void createGroupVm(Set<Integer> g) {
-        for(int vmId : g){
+        for (int vmId : g) {
             createSingleVm(vmId);
         }
     }
