@@ -5,18 +5,12 @@
  */
 package rallocloud.main.assignment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
-import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
  * Arbitrary next fit
@@ -50,9 +44,8 @@ public class ANFDatacenterBroker extends BrokerStrategy {
             }
             setVmsRequested(getVmsRequested() + 1);
             int datacenterId = datacenterIdsList.get(i++ % datacenterIdsList.size());
-            String datacenterName = CloudSim.getEntityName(datacenterId);
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
-                    + " in " + datacenterName);
+                    + " in " + CloudSim.getEntityName(datacenterId));
             sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
         }
     }

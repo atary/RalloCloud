@@ -6,16 +6,15 @@
 package rallocloud.main.assignment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.cloudbus.cloudsim.DatacenterCharacteristics;
+import java.util.Map;
+import java.util.Set;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
-import org.cloudbus.cloudsim.core.SimEvent;
-import org.cloudbus.cloudsim.lists.VmList;
 import rallocloud.main.MyNetworkTopology;
-import rallocloud.main.Statistician;
 
 /**
  * Latency based first fit
@@ -24,86 +23,54 @@ import rallocloud.main.Statistician;
  */
 public class LFFDatacenterBroker extends BrokerStrategy {
 
+    protected Map<Integer, List<Integer>> datacenterRequestedIdsMap;
+
     public LFFDatacenterBroker(String name) throws Exception {
         super(name);
+        datacenterRequestedIdsMap = new HashMap<>();
     }
 
     @Override
-    protected void processResourceCharacteristics(SimEvent ev) {
-        DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
-        getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
-
-        if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
-            setDatacenterRequestedIdsList(new ArrayList<Integer>());
-            createVmsInDatacenter(getDatacenterIdsList(), -1);
+    protected void createSingleVm(int vmId) {
+        ArrayList<Integer> requestedDCs = new ArrayList<>();
+        if (datacenterRequestedIdsMap.get(vmId) != null) {
+            requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
         }
-    }
-
-    protected void createVmsInDatacenter(List<Integer> datacenterIds, int rejectedId) {
-        int requestedVms = 0;
-        getDatacenterRequestedIdsList().add(rejectedId);
-        for (Vm vm : getVmList()) {
-            double minDelay = Double.MAX_VALUE;
-            int datacenterId = -1;
-            for (int dcId : datacenterIds) {
-                double delay = MyNetworkTopology.getDelay(dcId, vm.getUserId());
-                if (delay < minDelay && !getDatacenterRequestedIdsList().contains(dcId)) {
+        Vm vm = null;
+        for (Vm v : vmList) {
+            if (v.getId() == vmId) {
+                vm = v;
+            }
+        }
+        double minDelay = Double.MAX_VALUE;
+        int dcId = -1;
+        for (int d : datacenterIdsList) {
+            if (!requestedDCs.contains(d)) {
+                double delay = MyNetworkTopology.getDelay(d, vm.getUserId());
+                if (delay < minDelay) {
                     minDelay = delay;
-                    datacenterId = dcId;
+                    dcId = d;
                 }
             }
-            String datacenterName = CloudSim.getEntityName(datacenterId);
-            if (!getVmsToDatacentersMap().containsKey(vm.getId())) {
-                Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()
-                        + " in " + datacenterName);
-                sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
-                requestedVms++;
-            }
         }
-
-        setVmsRequested(requestedVms);
-        setVmsAcks(0);
+        if (dcId != -1) {
+            setVmsRequested(getVmsRequested() + 1);
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+            sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
+            requestedDCs.add(dcId);
+            datacenterRequestedIdsMap.put(vmId, requestedDCs);
+        } else {
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": None of the datacenters were available for VM #" + vmId + ". Retrying...");
+            datacenterRequestedIdsMap.remove(vmId);
+            createSingleVm(vmId);
+        }
     }
 
     @Override
-    protected void processVmCreate(SimEvent ev) {
-        int[] data = (int[]) ev.getData();
-        int datacenterId = data[0];
-        int vmId = data[1];
-        int result = data[2];
-        Statistician.trial();
-        if (result == CloudSimTags.TRUE) {
-            getVmsToDatacentersMap().put(vmId, datacenterId);
-            getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId
-                    + " has been created in Datacenter #" + datacenterId + ", Host #"
-                    + VmList.getById(getVmsCreatedList(), vmId).getHost().getId());
-        } else {
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId
-                    + " failed in Datacenter #" + datacenterId);
-            Statistician.rejected();
-        }
-
-        incrementVmsAcks();
-
-        // all the requested VMs have been created
-        if (getVmsCreatedList().size() == getVmList().size() - getVmsDestroyed()) {
-            submitCloudlets();
-        } else {
-            // all the acks received, but some VMs were not created
-            if (getVmsRequested() == getVmsAcks()) {
-
-                createVmsInDatacenter(getDatacenterIdsList(), datacenterId);
-
-                // all datacenters already queried
-                if (getVmsCreatedList().size() > 0) { // if some vm were created
-                    submitCloudlets();
-                } else { // no vms created. abort
-                    Log.printLine(CloudSim.clock() + ": " + getName()
-                            + ": none of the required VMs could be created. Aborting");
-                    finishExecution();
-                }
-            }
+    protected void createGroupVm(Set<Integer> g) {
+        for (int vmId : g) {
+            createSingleVm(vmId);
         }
     }
+
 }

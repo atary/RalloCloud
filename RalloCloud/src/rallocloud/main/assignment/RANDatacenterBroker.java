@@ -5,16 +5,12 @@
  */
 package rallocloud.main.assignment;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
-import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
-import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
  * Random

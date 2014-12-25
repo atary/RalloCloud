@@ -7,7 +7,6 @@ package rallocloud.main;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,7 +14,6 @@ import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
-import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
@@ -163,7 +161,7 @@ public class RalloCloud {
             ArrayList<Integer> b2 = new ArrayList<>();
             b2.add(simGrphMap.get(broker2.getId()));
 
-            //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
+            Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -339,7 +337,7 @@ public class RalloCloud {
 
         BrokerStrategy broker;
         try {
-            broker = new RANDatacenterBroker("Broker");
+            broker = new LFFDatacenterBroker("Broker");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
