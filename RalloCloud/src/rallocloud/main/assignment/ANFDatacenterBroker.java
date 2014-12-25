@@ -48,7 +48,7 @@ public class ANFDatacenterBroker extends BrokerStrategy {
                     vm = v;
                 }
             }
-
+            setVmsRequested(getVmsRequested() + 1);
             int datacenterId = datacenterIdsList.get(i++ % datacenterIdsList.size());
             String datacenterName = CloudSim.getEntityName(datacenterId);
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId()

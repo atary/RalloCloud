@@ -7,12 +7,18 @@ package rallocloud.main.assignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
+import java.util.Set;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
+import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.Vm;
+import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
  * Random
- * 
+ *
  * @author Atakan
  */
 public class RANDatacenterBroker extends BrokerStrategy {
@@ -22,14 +28,25 @@ public class RANDatacenterBroker extends BrokerStrategy {
     }
 
     @Override
-    protected void processResourceCharacteristics(SimEvent ev) {
-        DatacenterCharacteristics characteristics = (DatacenterCharacteristics) ev.getData();
-        getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
+    protected void createSingleVm(int vmId) {
+        Vm vm = null;
+        for (Vm v : vmList) {
+            if (v.getId() == vmId) {
+                vm = v;
+            }
+        }
+        Random randomGenerator = new Random();
+        int dcId = datacenterIdsList.get(randomGenerator.nextInt(datacenterIdsList.size()));
+        setVmsRequested(getVmsRequested() + 1);
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+        sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
+    }
 
-        if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
-            setDatacenterRequestedIdsList(new ArrayList<Integer>());
-            Collections.shuffle(getDatacenterIdsList());
-            createVmsInDatacenter(getDatacenterIdsList().get(0));
+    @Override
+    protected void createGroupVm(Set<Integer> g) {
+        for (int vmId : g) {
+            createSingleVm(vmId);
         }
     }
+
 }
