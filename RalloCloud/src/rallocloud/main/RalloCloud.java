@@ -83,10 +83,8 @@ public class RalloCloud {
             MyNetworkTopology.mapNode(dc.getId(), 14);
             simGrphMap.put(dc.getId(), 14);
 
-            //BrokerStrategy.i = 0;
-            //BrokerStrategy.dcList = dcList;
-            BrokerStrategy broker1 = createBroker();
-            BrokerStrategy broker2 = createBroker();
+            BrokerStrategy broker1 = createBroker(dcList);
+            BrokerStrategy broker2 = createBroker(dcList);
 
             double[][] loadTopology1 = createLoad(broker1, 3);
             double[][] loadTopology2 = createLoad(broker2, 2);
@@ -333,11 +331,12 @@ public class RalloCloud {
         }
     }
 
-    private static BrokerStrategy createBroker() {
+    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList) {
 
         BrokerStrategy broker;
         try {
-            broker = new LFFDatacenterBroker("Broker");
+            broker = new LBGDatacenterBroker("Broker");
+            broker.setDatacenterList(dcList);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

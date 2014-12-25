@@ -5,8 +5,10 @@
  */
 package rallocloud.main.assignment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -23,7 +25,15 @@ import rallocloud.main.Statistician;
 public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
 
     //public static int i;
-    //public static ArrayList<Datacenter> dcList;
+    protected ArrayList<Datacenter> datacenterList;
+
+    public ArrayList<Datacenter> getDatacenterList() {
+        return datacenterList;
+    }
+
+    public void setDatacenterList(ArrayList<Datacenter> datacenterList) {
+        this.datacenterList = datacenterList;
+    }
     
     protected Set<Set<Integer>> VmGroups;
 
