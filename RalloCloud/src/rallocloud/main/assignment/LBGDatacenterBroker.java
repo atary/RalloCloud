@@ -61,20 +61,21 @@ public class LBGDatacenterBroker extends BrokerStrategy {
                 }
             }
             double ramCap = 0;
+            double ramUse = 0;
+
             for (int i = 0; i < dc.getHostList().size(); i++) {
-                ramCap += dc.getHostList().get(i).getRam();
+                ramCap = dc.getHostList().get(i).getRam();
             }
 
-            double ramUse = 0;
-            for (Vm v : vmList) {
-                if (v.getHost() != null && v.getHost().getDatacenter().getId() == di) {
+            for (Vm v : vmsCreatedList) {
+                if (vmsToDatacentersMap.get(v.getId()) == di) {
                     ramUse += v.getRam();
                 }
             }
 
             double util = ramUse / ramCap;
-            
-            System.out.println("util: " + util + "\n");
+
+            //System.out.println(dc.getName() + " util: " + util + " (" + ramUse + "/" + ramCap + ")");
 
             if (util < minUtil) {
                 minUtil = util;

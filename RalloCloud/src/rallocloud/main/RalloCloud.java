@@ -72,7 +72,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 3000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 7000, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
                 simGrphMap.put(dc.getId(), i);
@@ -115,9 +115,7 @@ public class RalloCloud {
 
             List<Cloudlet> clList1 = broker1.getCloudletSubmittedList();
             List<Cloudlet> clList2 = broker2.getCloudletSubmittedList();
-            
-            broker1.getVmList().get(0).getCurrentAllocatedBw();
-            
+                        
             CloudSim.stopSimulation();
             
             List<Cloudlet> clList = new ArrayList<Cloudlet>(clList1);
@@ -159,7 +157,7 @@ public class RalloCloud {
             ArrayList<Integer> b2 = new ArrayList<>();
             b2.add(simGrphMap.get(broker2.getId()));
 
-            Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
+            //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
 
         } catch (Exception e) {
             e.printStackTrace();
