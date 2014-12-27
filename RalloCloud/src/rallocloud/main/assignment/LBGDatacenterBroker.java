@@ -41,12 +41,7 @@ public class LBGDatacenterBroker extends BrokerStrategy {
         if (datacenterRequestedIdsMap.get(vmId) != null) {
             requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
         }
-        Vm vm = null;
-        for (Vm v : vmList) {
-            if (v.getId() == vmId) {
-                vm = v;
-            }
-        }
+        Vm vm = VmList.getById(getVmList(), vmId);
         double minUtil = Double.MAX_VALUE;
         int dcId = -1;
         for (int di : datacenterIdsList) {

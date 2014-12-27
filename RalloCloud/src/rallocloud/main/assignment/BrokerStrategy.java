@@ -84,33 +84,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             Statistician.rejected();
             createSingleVm(vmId);
         }
-
         incrementVmsAcks();
-
-        // all the requested VMs have been created
-        /*if (getVmsCreatedList().size() == getVmList().size() - getVmsDestroyed()) {
-         submitCloudlets();
-         } else {
-         // all the acks received, but some VMs were not created
-         if (getVmsRequested() == getVmsAcks()) {
-         // find id of the next datacenter that has not been tried
-         for (int nextDatacenterId : getDatacenterIdsList()) {
-         if (!getDatacenterRequestedIdsList().contains(nextDatacenterId)) {
-         createVmsInDatacenter(nextDatacenterId);
-         return;
-         }
-         }
-
-         // all datacenters already queried
-         if (getVmsCreatedList().size() > 0) { // if some vm were created
-         submitCloudlets();
-         } else { // no vms created. abort
-         Log.printLine(CloudSim.clock() + ": " + getName()
-         + ": none of the required VMs could be created. Aborting");
-         finishExecution();
-         }
-         }
-         } */
     }
 
     protected abstract void createSingleVm(int id);
@@ -124,7 +98,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet "
                         + cloudlet.getCloudletId() + " to VM #" + vm.getId());
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
-                cloudletsSubmitted++;
+                //cloudletsSubmitted++;
                 getCloudletSubmittedList().add(cloudlet);
             }
         }
@@ -141,7 +115,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Log.printLine(CloudSim.clock() + ": " + getName() + ": Cloudlet " + cloudlet.getCloudletId()
                 + " received");
         destroyVm(cloudlet.getVmId());
-        cloudletsSubmitted--;
+        //cloudletsSubmitted--;
     }
 
     private void destroyVm(int vmId) {

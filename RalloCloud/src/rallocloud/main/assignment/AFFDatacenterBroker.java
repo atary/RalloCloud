@@ -14,6 +14,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.lists.VmList;
 
 /**
  * Arbitrary first fit (cloudsim default, overridden only for consistency)
@@ -35,12 +36,7 @@ public class AFFDatacenterBroker extends BrokerStrategy {
         if (datacenterRequestedIdsMap.get(vmId) != null) {
             requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
         }
-        Vm vm = null;
-        for (Vm v : vmList) {
-            if (v.getId() == vmId) {
-                vm = v;
-            }
-        }
+        Vm vm = VmList.getById(getVmList(), vmId);
         for (int dcId : datacenterIdsList) {
             if (!requestedDCs.contains(dcId)) {
                 setVmsRequested(getVmsRequested() + 1);

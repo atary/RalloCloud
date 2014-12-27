@@ -14,6 +14,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.lists.VmList;
 import rallocloud.main.MyNetworkTopology;
 
 /**
@@ -36,12 +37,7 @@ public class LFFDatacenterBroker extends BrokerStrategy {
         if (datacenterRequestedIdsMap.get(vmId) != null) {
             requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
         }
-        Vm vm = null;
-        for (Vm v : vmList) {
-            if (v.getId() == vmId) {
-                vm = v;
-            }
-        }
+        Vm vm = VmList.getById(getVmList(), vmId);
         double minDelay = Double.MAX_VALUE;
         int dcId = -1;
         for (int d : datacenterIdsList) {

@@ -11,6 +11,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.lists.VmList;
 
 /**
  * Random
@@ -25,12 +26,7 @@ public class RANDatacenterBroker extends BrokerStrategy {
 
     @Override
     protected void createSingleVm(int vmId) {
-        Vm vm = null;
-        for (Vm v : vmList) {
-            if (v.getId() == vmId) {
-                vm = v;
-            }
-        }
+        Vm vm = VmList.getById(getVmList(), vmId);
         Random randomGenerator = new Random();
         int dcId = datacenterIdsList.get(randomGenerator.nextInt(datacenterIdsList.size()));
         setVmsRequested(getVmsRequested() + 1);
