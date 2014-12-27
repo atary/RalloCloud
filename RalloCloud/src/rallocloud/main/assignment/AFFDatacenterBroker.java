@@ -40,7 +40,7 @@ public class AFFDatacenterBroker extends BrokerStrategy {
         for (int dcId : datacenterIdsList) {
             if (!requestedDCs.contains(dcId)) {
                 setVmsRequested(getVmsRequested() + 1);
-                Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+                Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
                 sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
                 requestedDCs.add(dcId);
                 datacenterRequestedIdsMap.put(vmId, requestedDCs);

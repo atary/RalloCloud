@@ -62,8 +62,9 @@ public class LBGDatacenterBroker extends BrokerStrategy {
                 ramCap = dc.getHostList().get(i).getRam();
             }
 
-            for (Vm v : vmsCreatedList) {
-                if (vmsToDatacentersMap.get(v.getId()) == di) {
+            for (Vm v : AllVmList) {
+                //if (vmsToDatacentersMap.get(v.getId()) == di) {
+                if (v.getHost() != null && v.getHost().getDatacenter().getId() == di) {
                     ramUse += v.getRam();
                 }
             }
@@ -71,7 +72,6 @@ public class LBGDatacenterBroker extends BrokerStrategy {
             double util = ramUse / ramCap;
 
             //System.out.println(dc.getName() + " util: " + util + " (" + ramUse + "/" + ramCap + ")");
-
             if (util < minUtil) {
                 minUtil = util;
                 dcId = di;
@@ -79,7 +79,7 @@ public class LBGDatacenterBroker extends BrokerStrategy {
         }
         if (dcId != -1) {
             setVmsRequested(getVmsRequested() + 1);
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
             sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
             requestedDCs.add(dcId);
             datacenterRequestedIdsMap.put(vmId, requestedDCs);

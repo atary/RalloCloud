@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
@@ -35,6 +36,8 @@ import rallocloud.main.assignment.*;
  * @author Atakan
  */
 public class RalloCloud {
+    
+    private static int vmid;
 
     public static void main(String[] args) {
 
@@ -72,25 +75,25 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 7000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 3000, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
                 simGrphMap.put(dc.getId(), i);
             }
-            
+
             Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
             dcList.add(dc);
             MyNetworkTopology.mapNode(dc.getId(), 14);
             simGrphMap.put(dc.getId(), 14);
 
-            BrokerStrategy broker1 = createBroker(dcList);
-            BrokerStrategy broker2 = createBroker(dcList);
-
+            BrokerStrategy broker1 = createBroker(dcList, "B1");
+            BrokerStrategy broker2 = createBroker(dcList, "B2");
+            
+            vmid = 0;
             double[][] loadTopology1 = createLoad(broker1, 3);
             double[][] loadTopology2 = createLoad(broker2, 2);
 
             //Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
-
             MyNetworkTopology.mapNode(broker1.getId(), 15);
             simGrphMap.put(broker1.getId(), 15);
             MyNetworkTopology.mapNode(broker2.getId(), 16);
@@ -110,38 +113,37 @@ public class RalloCloud {
             excluded.add(14);
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels, brokers, cores, excluded);
-            
             CloudSim.startSimulation();
 
             List<Cloudlet> clList1 = broker1.getCloudletSubmittedList();
             List<Cloudlet> clList2 = broker2.getCloudletSubmittedList();
-                        
-            CloudSim.stopSimulation();
             
+            Map<Integer, Integer> VmsToDatacentersMap = broker1.getVmsToDatacentersMap();
+
+            CloudSim.stopSimulation();
+
             List<Cloudlet> clList = new ArrayList<Cloudlet>(clList1);
             clList.addAll(clList2);
-            
+
             printCloudletList(clList);
             
+            //printVmList(vmList1);
+
             //BEGIN DSF CALC
-            
-            HashSet<Integer> dcs1= new HashSet<Integer>();
-            for(Cloudlet c : clList1){
+            HashSet<Integer> dcs1 = new HashSet<Integer>();
+            for (Cloudlet c : clList1) {
                 dcs1.add(c.getResourceId());
             }
-            HashSet<Integer> dcs2= new HashSet<Integer>();
-            for(Cloudlet c : clList2){
+            HashSet<Integer> dcs2 = new HashSet<Integer>();
+            for (Cloudlet c : clList2) {
                 dcs2.add(c.getResourceId());
             }
-            
-            DecimalFormat dft = new DecimalFormat("###.##");
-            double DSF = ((double)dcs1.size() / (double)clList1.size()) + ((double)dcs2.size() / (double)clList2.size());
-            System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(DSF/2.0));
-            
-            //END DSF CALC
-            
-            //printVmList(vmList);
 
+            DecimalFormat dft = new DecimalFormat("###.##");
+            double DSF = ((double) dcs1.size() / (double) clList1.size()) + ((double) dcs2.size() / (double) clList2.size());
+            System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(DSF / 2.0));
+
+            //END DSF CALC
             ArrayList<Integer> dcIdList1 = new ArrayList<>();
             ArrayList<Integer> dcIdList2 = new ArrayList<>();
 
@@ -158,7 +160,6 @@ public class RalloCloud {
             b2.add(simGrphMap.get(broker2.getId()));
 
             //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
-
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("The simulation has been terminated due to an unexpected error");
@@ -167,7 +168,6 @@ public class RalloCloud {
 
     private static double[][] createLoad(BrokerStrategy broker, int count) {
         int brokerId = broker.getId();
-        int vmid = 0;
         int cloudletid = 0;
         HashSet<Integer> group = new HashSet<>();
         for (int i = 0; i < count; i++) {
@@ -181,6 +181,7 @@ public class RalloCloud {
             Vm virtualMachine = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
             group.add(vmid);
             broker.getVmList().add(virtualMachine);
+            broker.getAllVmList().add(virtualMachine);
 
             long length = 30000;
             long fileSize = 300;
@@ -198,7 +199,7 @@ public class RalloCloud {
             cloudletid++;
         }
         broker.getVmGroups().add(group);
-        
+
         double[][] topology = new double[count][count];
 
         for (int i = 0; i < count; i++) {
@@ -324,17 +325,17 @@ public class RalloCloud {
         System.out.println("VM ID" + indent + "User ID" + indent
                 + "Host ID" + indent + "DC ID" + indent + "DC Name" + indent + "Start" + indent + "Finish" + indent + "User ID");
         for (Vm v : list) {
-            System.out.println(v.getCurrentAllocatedRam());
             //System.out.println(v.getId() + indent + v.getUserId() + indent + v.getHost().getId() + indent + v.getHost().getDatacenter().getId() + indent + v.getHost().getDatacenter().getName());
         }
     }
 
-    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList) {
+    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name) {
 
         BrokerStrategy broker;
         try {
-            broker = new LBGDatacenterBroker("Broker");
+            broker = new LBGDatacenterBroker(name);
             broker.setDatacenterList(dcList);
+            System.out.println(broker.getClass().getSimpleName() + " is created");
         } catch (Exception e) {
             e.printStackTrace();
             return null;

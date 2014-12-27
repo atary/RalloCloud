@@ -6,7 +6,9 @@
 package rallocloud.main.assignment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Datacenter;
@@ -29,6 +31,14 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     //public static int i;
     protected ArrayList<Datacenter> datacenterList;
 
+    protected static ArrayList<Vm> AllVmList = new ArrayList<>(); //All VMs from all brokers
+
+    protected Set<Set<Integer>> VmGroups;
+
+    public ArrayList<Vm> getAllVmList() {
+        return AllVmList;
+    }
+
     public ArrayList<Datacenter> getDatacenterList() {
         return datacenterList;
     }
@@ -37,19 +47,18 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         this.datacenterList = datacenterList;
     }
 
-    protected Set<Set<Integer>> VmGroups;
-
     public Set<Set<Integer>> getVmGroups() {
         return VmGroups;
-    }
-
-    public void setVmGroups(Set<Set<Integer>> VmGroups) {
-        this.VmGroups = VmGroups;
     }
 
     public BrokerStrategy(String name) throws Exception {
         super(name);
         VmGroups = new HashSet<>();
+    }
+
+    @Override
+    public Map<Integer, Integer> getVmsToDatacentersMap() {
+        return vmsToDatacentersMap;
     }
 
     @Override
@@ -74,13 +83,12 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         if (result == CloudSimTags.TRUE) {
             getVmsToDatacentersMap().put(vmId, datacenterId);
             getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId
-                    + " has been created in Datacenter #" + datacenterId + ", Host #"
-                    + VmList.getById(getVmsCreatedList(), vmId).getHost().getId());
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId + " has been created in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");/* + ", Host #"
+             + VmList.getById(getVmsCreatedList(), vmId).getHost().getId());*/
+
             submitCloudlets(vmId);
         } else {
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId
-                    + " failed in Datacenter #" + datacenterId);
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
             Statistician.rejected();
             createSingleVm(vmId);
         }
@@ -95,8 +103,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
-                Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet "
-                        + cloudlet.getCloudletId() + " to VM #" + vm.getId());
+                //Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
                 //cloudletsSubmitted++;
                 getCloudletSubmittedList().add(cloudlet);
@@ -112,15 +119,16 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     protected void processCloudletReturn(SimEvent ev) {
         Cloudlet cloudlet = (Cloudlet) ev.getData();
         getCloudletReceivedList().add(cloudlet);
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": Cloudlet " + cloudlet.getCloudletId()
-                + " received");
+        Vm vm = VmList.getById(getVmsCreatedList(), cloudlet.getVmId());
+        //Log.printLine(CloudSim.clock() + ": " + getName() + ": Cloudlet " + cloudlet.getCloudletId() + " received by VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
+
         destroyVm(cloudlet.getVmId());
         //cloudletsSubmitted--;
     }
 
     private void destroyVm(int vmId) {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": Destroying VM #" + vmId);
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": Destroying VM #" + vmId + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
     }
 

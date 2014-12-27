@@ -51,7 +51,7 @@ public class LFFDatacenterBroker extends BrokerStrategy {
         }
         if (dcId != -1) {
             setVmsRequested(getVmsRequested() + 1);
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
             sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
             requestedDCs.add(dcId);
             datacenterRequestedIdsMap.put(vmId, requestedDCs);

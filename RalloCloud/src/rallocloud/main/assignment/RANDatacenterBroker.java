@@ -30,7 +30,7 @@ public class RANDatacenterBroker extends BrokerStrategy {
         Random randomGenerator = new Random();
         int dcId = datacenterIdsList.get(randomGenerator.nextInt(datacenterIdsList.size()));
         setVmsRequested(getVmsRequested() + 1);
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId));
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
         sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
     }
 
