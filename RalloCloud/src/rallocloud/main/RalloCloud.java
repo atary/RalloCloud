@@ -40,7 +40,8 @@ import rallocloud.main.assignment.*;
  */
 public class RalloCloud {
 
-    private static int vmid;
+    private static int vmid = 0;
+    private static int cloudletid = 0;
 
     private enum topologyType {
 
@@ -83,7 +84,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 30000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 3000, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
                 simGrphMap.put(dc.getId(), i);
@@ -97,7 +98,6 @@ public class RalloCloud {
             BrokerStrategy broker1 = createBroker(dcList, "B1");
             BrokerStrategy broker2 = createBroker(dcList, "B2");
 
-            vmid = 0;
             Double[][] loadTopology1 = createLoad(broker1, 6, topologyType.CIRCULAR);
             Double[][] loadTopology2 = createLoad(broker2, 2, topologyType.COMPLETE);
 
@@ -176,7 +176,6 @@ public class RalloCloud {
 
     private static Double[][] createLoad(BrokerStrategy broker, int count, topologyType type) {
         int brokerId = broker.getId();
-        int cloudletid = 0;
         HashSet<Integer> group = new HashSet<>();
         for (int i = 0; i < count; i++) {
             int mips = 3000;
