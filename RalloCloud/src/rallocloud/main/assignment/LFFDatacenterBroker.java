@@ -63,7 +63,7 @@ public class LFFDatacenterBroker extends BrokerStrategy {
     }
 
     @Override
-    protected void createGroupVm(Set<Integer> g, Double[][] t) {
+    protected void createGroupVm(List<Integer> g, Double[][] t) {
         for (int vmId : g) {
             createSingleVm(vmId);
         }

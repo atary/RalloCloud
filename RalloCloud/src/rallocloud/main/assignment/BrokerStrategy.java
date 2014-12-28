@@ -7,7 +7,7 @@ package rallocloud.main.assignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cloudbus.cloudsim.Cloudlet;
@@ -33,7 +33,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     protected static ArrayList<Vm> AllVmList = new ArrayList<>(); //All VMs from all brokers
 
-    protected Map<Set<Integer>, Double[][]> VmGroups;
+    protected Map<List<Integer>, Double[][]> VmGroups;
 
     public ArrayList<Vm> getAllVmList() {
         return AllVmList;
@@ -47,7 +47,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         this.datacenterList = datacenterList;
     }
 
-    public Map<Set<Integer>, Double[][]> getVmGroups() {
+    public Map<List<Integer>, Double[][]> getVmGroups() {
         return VmGroups;
     }
 
@@ -67,7 +67,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
         if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
             //setDatacenterRequestedIdsList(new ArrayList<Integer>());
-            for (Set<Integer> g : VmGroups.keySet()) {
+            for (List<Integer> g : VmGroups.keySet()) {
                 createGroupVm(g, VmGroups.get(g));
             }
         }
@@ -86,8 +86,8 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId + " has been created in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
 
             boolean ready = true;
-            Set<Integer> group = null;
-            for (Set<Integer> g : VmGroups.keySet()) {
+            List<Integer> group = null;
+            for (List<Integer> g : VmGroups.keySet()) {
                 if (g.contains(vmId)) {
                     group = g;
                     for (int v : group) {
@@ -118,12 +118,15 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     protected abstract void createSingleVm(int id);
 
-    protected abstract void createGroupVm(Set<Integer> g, Double[][] t);
+    protected abstract void createGroupVm(List<Integer> g, Double[][] t);
 
     private void submitCloudlets(int vmId) {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
+                
+                //TODO: Hangi VM'lere yönlü olarak bağlı olduğu belirlenecek. Length değeri artırılacak. Artış miktarı bağlı vm'e olan delay ve input/output size ile orantılı olacak.
+                
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
                 //cloudletsSubmitted++;

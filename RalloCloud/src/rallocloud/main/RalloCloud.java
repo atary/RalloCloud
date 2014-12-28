@@ -176,7 +176,7 @@ public class RalloCloud {
 
     private static Double[][] createLoad(BrokerStrategy broker, int count, topologyType type) {
         int brokerId = broker.getId();
-        HashSet<Integer> group = new HashSet<>();
+        ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int mips = 3000;
             long size = 10000; //image size (MB)

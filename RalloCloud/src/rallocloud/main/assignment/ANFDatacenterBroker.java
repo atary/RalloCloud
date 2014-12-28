@@ -5,8 +5,8 @@
  */
 package rallocloud.main.assignment;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -29,13 +29,13 @@ public class ANFDatacenterBroker extends BrokerStrategy {
 
     @Override
     protected void createSingleVm(int vmId) {
-        HashSet<Integer> hs = new HashSet<>();
+        ArrayList<Integer> hs = new ArrayList<>();
         hs.add(vmId);
         createGroupVm(hs, new Double[0][0]);
     }
 
     @Override
-    protected void createGroupVm(Set<Integer> g, Double[][] t) {
+    protected void createGroupVm(List<Integer> g, Double[][] t) {
         for (int vmId : g) {
             Vm vm = VmList.getById(getVmList(), vmId);
             setVmsRequested(getVmsRequested() + 1);

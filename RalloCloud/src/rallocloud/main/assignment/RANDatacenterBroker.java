@@ -5,6 +5,7 @@
  */
 package rallocloud.main.assignment;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import org.cloudbus.cloudsim.Log;
@@ -35,7 +36,7 @@ public class RANDatacenterBroker extends BrokerStrategy {
     }
 
     @Override
-    protected void createGroupVm(Set<Integer> g, Double[][] t) {
+    protected void createGroupVm(List<Integer> g, Double[][] t) {
         for (int vmId : g) {
             createSingleVm(vmId);
         }
