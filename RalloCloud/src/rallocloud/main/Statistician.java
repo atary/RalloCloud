@@ -22,6 +22,11 @@ public class Statistician {
     private static int RJR = 0;
     private static int size = 0;
     private static double endTime;
+    private static ArrayList<Double> delays = new ArrayList<>();
+
+    public static void addDelay(double d) {
+        delays.add(d);
+    }
 
     public static void setEndTime(double endTime) {
         Statistician.endTime = endTime;
@@ -83,6 +88,24 @@ public class Statistician {
         for (Cloudlet c : clList) {
             mips += c.getCloudletLength();
         }
-        return mips/endTime;
+        return mips / endTime;
+    }
+
+    static double getADL() {
+        double total = 0;
+        for (double d : delays) {
+            total += d;
+        }
+        return total / delays.size();
+    }
+
+    static double getMDL() {
+        double max = 0;
+        for (double d : delays) {
+            if (d > max) {
+                max = d;
+            }
+        }
+        return max;
     }
 }

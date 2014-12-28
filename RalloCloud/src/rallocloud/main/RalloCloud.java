@@ -80,7 +80,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 4000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 14000, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
             }
@@ -98,11 +98,10 @@ public class RalloCloud {
             }
 
             for (BrokerStrategy bs : brokerSet) {
-                Double[][] loadTopology = createLoad(bs, 1, topologyType.CIRCULAR);
+                Double[][] loadTopology = createLoad(bs, 2, topologyType.CIRCULAR);
             }
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
-            
             //START
             CloudSim.startSimulation();
 
@@ -125,7 +124,6 @@ public class RalloCloud {
             DecimalFormat dft = new DecimalFormat("###.##");
             System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
             System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
-            System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
 
             printVmList(VmsToDatacentersMap, labels);
 
@@ -294,9 +292,12 @@ public class RalloCloud {
         System.out.println("\n=========== METRICS ===========");
         System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
         System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
-        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
+        System.out.println("Average Inter-DC Latency (ADL)\t: \t" + dft.format(Statistician.getADL()) + "s");
+        System.out.println("Maximum Inter-DC Latency (MDL)\t: \t" + dft.format(Statistician.getMDL()) + "s");
         System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
         System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
+        System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
+        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");        
     }
 
     private static void printVmList(Map<Integer, Integer> m, ArrayList<String> l) {
@@ -315,7 +316,7 @@ public class RalloCloud {
         try {
             BrokerStrategy broker;
 
-            broker = new LFFDatacenterBroker(name);
+            broker = new ANFDatacenterBroker(name);
             broker.setDatacenterList(dcList);
             MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
 

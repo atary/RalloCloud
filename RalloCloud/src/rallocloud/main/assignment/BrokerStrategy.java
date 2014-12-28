@@ -179,6 +179,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = MyNetworkTopology.getDelay(dcId, dc.getId());
+            Statistician.addDelay(delay);
             if (delay > extraFrom) {
                 extraFrom = delay;
             }
@@ -187,6 +188,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = MyNetworkTopology.getDelay(dc.getId(), dcId);
+            Statistician.addDelay(delay);
             if (delay > extraTo) {
                 extraTo = delay;
             }
