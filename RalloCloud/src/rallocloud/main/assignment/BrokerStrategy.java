@@ -105,8 +105,9 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 for (int v : group) {
                     submitCloudlets(v);
                 }
+            } else {
+                System.out.println("GROUP IS NOT READY!");
             }
-            else System.out.println("GROUP IS NOT READY!");
 
         } else {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
@@ -124,9 +125,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
-                
-                //TODO: Hangi VM'lere yönlü olarak bağlı olduğu belirlenecek. Length değeri artırılacak. Artış miktarı bağlı vm'e olan delay ve input/output size ile orantılı olacak.
-                
+                cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
                 //cloudletsSubmitted++;
@@ -154,6 +153,11 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         Log.printLine(CloudSim.clock() + ": " + getName() + ": Destroying VM #" + vmId + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
+    }
+
+    private long calculateExtraLength(Cloudlet c) {
+        //TODO: Hangi VM'lere yönlü olarak bağlı olduğu belirlenecek. Length değeri artırılacak. Artış miktarı bağlı vm'e olan delay ve input/output size ile orantılı olacak.
+        return (long) (c.getCloudletLength() * 0.5);
     }
 
 }
