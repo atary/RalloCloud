@@ -127,7 +127,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
-                cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(vmId, group, top));
+                cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet, vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
                 //cloudletsSubmitted++;
@@ -157,8 +157,10 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
     }
 
-    private long calculateExtraLength(int vmId, List<Integer> group, Double[][] top) {
+    private long calculateExtraLength(Cloudlet c, int vmId, List<Integer> group, Double[][] top) {
         int topIndex = group.indexOf(vmId);
+
+        Datacenter dc = VmList.getById(getVmList(), vmId).getHost().getDatacenter();
 
         ArrayList<Integer> from = new ArrayList<>();
         ArrayList<Integer> to = new ArrayList<>();
@@ -171,9 +173,28 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 to.add(group.get(i));
             }
         }
-        System.out.println("VM " + vmId + "is connected to: " + to + " and is connected from: " + from);
-        //MyNetworkTopology.getDelay(i-2, j-2);
-        return 0;
+
+        double extraFrom = 0;
+        double extraTo = 0;
+
+        for (int i : from) {
+            Vm vm = VmList.getById(getVmList(), i);
+            int dcId = vm.getHost().getDatacenter().getId();
+            double delay = MyNetworkTopology.getDelay(dcId - 2, dc.getId() - 2);
+            if (delay > extraFrom) {
+                extraFrom = delay;
+            }
+        }
+        for (int i : to) {
+            Vm vm = VmList.getById(getVmList(), i);
+            int dcId = vm.getHost().getDatacenter().getId();
+            double delay = MyNetworkTopology.getDelay(dc.getId() - 2, dcId - 2);
+            if (delay > extraTo) {
+                extraTo = delay;
+            }
+        }
+        
+        return (long) (extraFrom*c.getCloudletFileSize() + extraTo*c.getCloudletOutputSize());
     }
 
 }
