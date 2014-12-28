@@ -7,12 +7,10 @@ package rallocloud.main;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cloudbus.cloudsim.Cloudlet;
@@ -31,7 +29,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.python.google.common.collect.HashBiMap;
 import rallocloud.main.assignment.*;
 
 /**
@@ -52,6 +49,7 @@ public class RalloCloud {
     public static void main(String[] args) {
 
         try {
+
             //HashBiMap<Integer, Integer> simGrphMap = HashBiMap.create(); //Key: cloudsim id, Value: grph id
 
             int num_user = 2;
@@ -80,6 +78,7 @@ public class RalloCloud {
             labels.add("BROKER2");
 
             MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
+            MyNetworkTopology.setNextIdx(MyNetworkTopology.getBwMatrix().length);
 
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
@@ -101,11 +100,13 @@ public class RalloCloud {
             Double[][] loadTopology1 = createLoad(broker1, 6, topologyType.CIRCULAR);
             Double[][] loadTopology2 = createLoad(broker2, 2, topologyType.COMPLETE);
 
-            //Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), new ArrayList<String>());
+            MyNetworkTopology.addLink(2,broker1.getId(),10.0,0.1);
+            MyNetworkTopology.addLink(11,broker2.getId(),10.0,0.1);            
             
-            MyNetworkTopology.mapNode(broker1.getId(), 15);
+            //MyNetworkTopology.mapNode(broker1.getId(), 15);
             //simGrphMap.put(broker1.getId(), 15);
-            MyNetworkTopology.mapNode(broker2.getId(), 16);
+            //MyNetworkTopology.mapNode(broker2.getId(), 16);
             //simGrphMap.put(broker2.getId(), 16);
 
             /*ArrayList<Integer> brokers = new ArrayList<>();
@@ -132,6 +133,7 @@ public class RalloCloud {
 
                         
             for (BrokerStrategy bs : brokerSet) {
+                if(bs.getCloudletSubmittedList().isEmpty()) continue;
                 clList.addAll(bs.getCloudletSubmittedList());
                 clSepList.add(bs.getCloudletSubmittedList());
             }

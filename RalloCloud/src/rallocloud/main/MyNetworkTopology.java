@@ -5,6 +5,13 @@
  */
 package rallocloud.main;
 
+import java.io.IOException;
+import java.util.HashMap;
+import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.NetworkTopology;
+import org.cloudbus.cloudsim.network.DelayMatrix_Float;
+import org.cloudbus.cloudsim.network.GraphReaderBrite;
+
 /**
  *
  * @author Atakan
@@ -27,5 +34,9 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
         }
 
         return temp;
+    }
+
+    public static void setNextIdx(int nextIdx) {
+        NetworkTopology.nextIdx = nextIdx;
     }
 }
