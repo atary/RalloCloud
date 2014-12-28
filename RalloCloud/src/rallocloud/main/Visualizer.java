@@ -18,7 +18,7 @@ import toools.set.IntArrayListSet;
  */
 public class Visualizer {
 
-    public static void emptyTopology(double[][] bwMatrix, ArrayList<String> labels, ArrayList<Integer>... highlight) {
+    public static void emptyTopology(Double[][] bwMatrix, ArrayList<String> labels, ArrayList<Integer>... highlight) {
         Grph g = new InMemoryGrph();
 
         for (int i = 0; i < bwMatrix.length; i++) {
@@ -49,7 +49,7 @@ public class Visualizer {
         g.display();
     }
 
-    public static void assignedTopology(double[][] bwMatrix, ArrayList<String> labels, ArrayList<Integer>... highlight) {
+    public static void assignedTopology(Double[][] bwMatrix, ArrayList<String> labels, ArrayList<Integer>... highlight) {
         Grph g = new InMemoryGrph();
         for (int i = 0; i < bwMatrix.length; i++) {
             g.addVertex(i);

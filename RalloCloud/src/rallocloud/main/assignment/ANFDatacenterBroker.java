@@ -31,11 +31,11 @@ public class ANFDatacenterBroker extends BrokerStrategy {
     protected void createSingleVm(int vmId) {
         HashSet<Integer> hs = new HashSet<>();
         hs.add(vmId);
-        createGroupVm(hs);
+        createGroupVm(hs, new Double[0][0]);
     }
 
     @Override
-    protected void createGroupVm(Set<Integer> g) {
+    protected void createGroupVm(Set<Integer> g, Double[][] t) {
         for (int vmId : g) {
             Vm vm = VmList.getById(getVmList(), vmId);
             setVmsRequested(getVmsRequested() + 1);

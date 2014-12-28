@@ -7,11 +7,14 @@ package rallocloud.main;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
@@ -36,8 +39,13 @@ import rallocloud.main.assignment.*;
  * @author Atakan
  */
 public class RalloCloud {
-    
+
     private static int vmid;
+
+    private enum topologyType {
+
+        LINEAR, CIRCULAR, COMPLETE, BINARY
+    }
 
     public static void main(String[] args) {
 
@@ -75,7 +83,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 3000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 30000, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
                 simGrphMap.put(dc.getId(), i);
@@ -88,12 +96,13 @@ public class RalloCloud {
 
             BrokerStrategy broker1 = createBroker(dcList, "B1");
             BrokerStrategy broker2 = createBroker(dcList, "B2");
-            
+
             vmid = 0;
-            double[][] loadTopology1 = createLoad(broker1, 3);
-            double[][] loadTopology2 = createLoad(broker2, 2);
+            Double[][] loadTopology1 = createLoad(broker1, 6, topologyType.CIRCULAR);
+            Double[][] loadTopology2 = createLoad(broker2, 2, topologyType.COMPLETE);
 
             //Visualizer.emptyTopology(loadTopology1, new ArrayList<String>());
+
             MyNetworkTopology.mapNode(broker1.getId(), 15);
             simGrphMap.put(broker1.getId(), 15);
             MyNetworkTopology.mapNode(broker2.getId(), 16);
@@ -117,7 +126,7 @@ public class RalloCloud {
 
             List<Cloudlet> clList1 = broker1.getCloudletSubmittedList();
             List<Cloudlet> clList2 = broker2.getCloudletSubmittedList();
-            
+
             Map<Integer, Integer> VmsToDatacentersMap = broker1.getVmsToDatacentersMap();
 
             CloudSim.stopSimulation();
@@ -126,9 +135,8 @@ public class RalloCloud {
             clList.addAll(clList2);
 
             printCloudletList(clList);
-            
-            //printVmList(vmList1);
 
+            //printVmList(vmList1);
             //BEGIN DSF CALC
             HashSet<Integer> dcs1 = new HashSet<Integer>();
             for (Cloudlet c : clList1) {
@@ -166,7 +174,7 @@ public class RalloCloud {
         }
     }
 
-    private static double[][] createLoad(BrokerStrategy broker, int count) {
+    private static Double[][] createLoad(BrokerStrategy broker, int count, topologyType type) {
         int brokerId = broker.getId();
         int cloudletid = 0;
         HashSet<Integer> group = new HashSet<>();
@@ -198,9 +206,8 @@ public class RalloCloud {
             vmid++;
             cloudletid++;
         }
-        broker.getVmGroups().add(group);
 
-        double[][] topology = new double[count][count];
+        Double[][] topology = new Double[count][count];
 
         for (int i = 0; i < count; i++) {
             for (int j = 0; j < count; j++) {
@@ -208,10 +215,28 @@ public class RalloCloud {
             }
         }
 
-        for (int i = 0; i < count - 1; i++) {
-            topology[i][i + 1] = 1.0;
-            topology[i + 1][i] = 1.0;
+        if (type == topologyType.LINEAR) {
+            for (int i = 0; i < count - 1; i++) {
+                topology[i][i + 1] = 1.0;
+                topology[i + 1][i] = 1.0;
+            }
+        } else if (type == topologyType.COMPLETE) {
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < count; j++) {
+                    if (i != j) {
+                        topology[i][j] = 1.0;
+                    }
+                }
+            }
+        } else if (type == topologyType.CIRCULAR) {
+            for (int i = 0; i < count - 1; i++) {
+                topology[i][i + 1] = 1.0;
+                topology[i + 1][i] = 1.0;
+            }
+            topology[count - 1][0] = 1.0;
         }
+
+        broker.getVmGroups().put(group, topology);
 
         return topology;
     }
@@ -331,15 +356,18 @@ public class RalloCloud {
 
     private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name) {
 
-        BrokerStrategy broker;
         try {
-            broker = new LBGDatacenterBroker(name);
+            BrokerStrategy broker;
+
+            broker = new AFFDatacenterBroker(name);
             broker.setDatacenterList(dcList);
             System.out.println(broker.getClass().getSimpleName() + " is created");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+
+            return broker;
+        } catch (Exception ex) {
+            Logger.getLogger(RalloCloud.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return broker;
+
+        return null;
     }
 }

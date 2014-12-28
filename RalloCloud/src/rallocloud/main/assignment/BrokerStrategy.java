@@ -33,7 +33,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     protected static ArrayList<Vm> AllVmList = new ArrayList<>(); //All VMs from all brokers
 
-    protected Set<Set<Integer>> VmGroups;
+    protected Map<Set<Integer>,Double[][]> VmGroups;
 
     public ArrayList<Vm> getAllVmList() {
         return AllVmList;
@@ -47,13 +47,13 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         this.datacenterList = datacenterList;
     }
 
-    public Set<Set<Integer>> getVmGroups() {
+    public Map<Set<Integer>,Double[][]> getVmGroups() {
         return VmGroups;
     }
 
     public BrokerStrategy(String name) throws Exception {
         super(name);
-        VmGroups = new HashSet<>();
+        VmGroups = new HashMap<>();
     }
 
     @Override
@@ -67,8 +67,8 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
         if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
             //setDatacenterRequestedIdsList(new ArrayList<Integer>());
-            for (Set<Integer> g : VmGroups) {
-                createGroupVm(g);
+            for (Set<Integer> g : VmGroups.keySet()) {
+                createGroupVm(g, VmGroups.get(g));
             }
         }
     }
@@ -97,7 +97,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     protected abstract void createSingleVm(int id);
 
-    protected abstract void createGroupVm(Set<Integer> g);
+    protected abstract void createGroupVm(Set<Integer> g, Double[][] t);
 
     private void submitCloudlets(int vmId) {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
