@@ -102,13 +102,12 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 }
             }
             if (ready) {
-                System.out.println("GROUP IS READY!");
+                Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") is ready.");
                 Double[][] t = VmGroups.get(group);
                 for (int v : group) {
                     submitCloudlets(v, group, t);
                 }
             } else {
-                System.out.println("GROUP IS NOT READY!");
             }
 
         } else {
