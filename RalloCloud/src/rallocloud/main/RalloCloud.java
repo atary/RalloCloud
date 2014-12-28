@@ -94,13 +94,13 @@ public class RalloCloud {
                 String name = "BROKER" + i;
                 i++;
                 labels.add(name);
-                BrokerStrategy broker = createBroker(dcList, name, d.getId());
+                createBroker(dcList, name, d.getId());
             }
 
             for (BrokerStrategy bs : brokerSet) {
                 Double[][] loadTopology = createLoad(bs, 2, topologyType.CIRCULAR);
             }
-
+            
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
             //START
             CloudSim.startSimulation();

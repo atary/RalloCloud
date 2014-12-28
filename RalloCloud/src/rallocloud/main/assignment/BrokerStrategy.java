@@ -6,9 +6,11 @@
 package rallocloud.main.assignment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
@@ -71,6 +73,12 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 createGroupVm(g, VmGroups.get(g));
             }
         }
+    }
+
+    @Override
+    protected void processResourceCharacteristicsRequest(SimEvent ev) {
+        super.processResourceCharacteristicsRequest(ev);
+        Collections.shuffle(datacenterIdsList, new Random(getId())); //Each broker has a differently ordered list.
     }
 
     @Override
