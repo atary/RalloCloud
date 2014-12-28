@@ -17,7 +17,15 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
         return bwUtilityMatrix;
     }
 
-    public static double[][] getBwMatrix() {
-        return bwMatrix;
+    public static Double[][] getBwMatrix() {
+        int l = bwMatrix.length;
+        Double[][] temp = new Double[l][l];
+        for (int i = 0; i < l; i++) {
+            for (int j = 0; j < l; j++) {
+                temp[i][j] = bwMatrix[i][j];
+            }
+        }
+
+        return temp;
     }
 }
