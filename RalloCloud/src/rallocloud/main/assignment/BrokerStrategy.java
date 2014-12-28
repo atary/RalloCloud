@@ -191,8 +191,14 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 extraTo = delay;
             }
         }
-        
-        return (long) (extraFrom*c.getCloudletFileSize() + extraTo*c.getCloudletOutputSize());
+
+        return (long) (extraFrom * c.getCloudletFileSize() + extraTo * c.getCloudletOutputSize());
+    }
+
+    @Override
+    public void shutdownEntity() {
+        Log.printLine(getName() + " is shutting down...");
+        Statistician.setEndTime(CloudSim.clock());
     }
 
 }

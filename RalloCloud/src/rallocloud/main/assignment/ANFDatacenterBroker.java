@@ -20,11 +20,10 @@ import org.cloudbus.cloudsim.lists.VmList;
  */
 public class ANFDatacenterBroker extends BrokerStrategy {
 
-    public static int i;
+    public static int i = 0;
 
     public ANFDatacenterBroker(String name) throws Exception {
         super(name);
-        i = 0;
     }
 
     @Override

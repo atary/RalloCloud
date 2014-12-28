@@ -7,9 +7,11 @@ package rallocloud.main;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.Datacenter;
 
 /**
  *
@@ -19,6 +21,11 @@ public class Statistician {
 
     private static int RJR = 0;
     private static int size = 0;
+    private static double endTime;
+
+    public static void setEndTime(double endTime) {
+        Statistician.endTime = endTime;
+    }
 
     public static double getRJR() {
         return (double) RJR / size;
@@ -42,5 +49,40 @@ public class Statistician {
             DSF += (double) dcs.size() / (double) clList.size();
         }
         return DSF / (double) clSepList.size();
+    }
+
+    public static double getLDB(List<Cloudlet> clList, ArrayList<Datacenter> dcList) {
+        HashMap<Integer, Double> dcUtil = new HashMap<>();
+        for (Cloudlet c : clList) {
+            int d = c.getResourceId();
+            double newValue = c.getCloudletLength();
+            for (Datacenter dc : dcList) {
+                if (dc.getId() == d) {
+                    newValue = newValue / dc.getHostList().get(0).getTotalMips();
+                }
+            }
+            if (dcUtil.containsKey(d)) {
+                newValue += dcUtil.get(d);
+            }
+            dcUtil.put(d, newValue);
+        }
+        double LDB = 0;
+        double mean = 0;
+        for (double util : dcUtil.values()) {
+            mean += util;
+        }
+        mean /= dcUtil.size();
+        for (double util : dcUtil.values()) {
+            LDB += Math.pow(util - mean, 2);
+        }
+        return Math.sqrt(LDB / dcUtil.size());
+    }
+
+    static double getTRP(List<Cloudlet> clList) {
+        double mips = 0;
+        for (Cloudlet c : clList) {
+            mips += c.getCloudletLength();
+        }
+        return mips/endTime;
     }
 }
