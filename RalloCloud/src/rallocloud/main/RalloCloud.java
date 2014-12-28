@@ -166,7 +166,7 @@ public class RalloCloud {
             b1.add(simGrphMap.get(broker1.getId()));
             ArrayList<Integer> b2 = new ArrayList<>();
             b2.add(simGrphMap.get(broker2.getId()));
-
+            
             //Visualizer.assignedTopology(MyNetworkTopology.getBwMatrix(), labels, b1, b2, dcIdList1, dcIdList2);
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,6 +233,7 @@ public class RalloCloud {
                 topology[i + 1][i] = 1.0;
             }
             topology[count - 1][0] = 1.0;
+            topology[0][count - 1] = 1.0;
         }
 
         broker.getVmGroups().put(group, topology);

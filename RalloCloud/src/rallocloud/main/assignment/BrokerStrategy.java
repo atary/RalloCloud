@@ -19,6 +19,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
+import rallocloud.main.MyNetworkTopology;
 import rallocloud.main.Statistician;
 
 /**
@@ -74,7 +75,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     }
 
     @Override
-    protected void processVmCreate(SimEvent ev) { //For statistician class
+    protected void processVmCreate(SimEvent ev) {
         int[] data = (int[]) ev.getData();
         int datacenterId = data[0];
         int vmId = data[1];
@@ -102,8 +103,9 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             }
             if (ready) {
                 System.out.println("GROUP IS READY!");
+                Double[][] t = VmGroups.get(group);
                 for (int v : group) {
-                    submitCloudlets(v);
+                    submitCloudlets(v, group, t);
                 }
             } else {
                 System.out.println("GROUP IS NOT READY!");
@@ -121,11 +123,11 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     protected abstract void createGroupVm(List<Integer> g, Double[][] t);
 
-    private void submitCloudlets(int vmId) {
+    private void submitCloudlets(int vmId, List<Integer> group, Double[][] top) {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
-                cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet));
+                cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
                 //cloudletsSubmitted++;
@@ -155,9 +157,23 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
     }
 
-    private long calculateExtraLength(Cloudlet c) {
-        //TODO: Hangi VM'lere yönlü olarak bağlı olduğu belirlenecek. Length değeri artırılacak. Artış miktarı bağlı vm'e olan delay ve input/output size ile orantılı olacak.
-        return (long) (c.getCloudletLength() * 0.5);
+    private long calculateExtraLength(int vmId, List<Integer> group, Double[][] top) {
+        int topIndex = group.indexOf(vmId);
+
+        ArrayList<Integer> from = new ArrayList<>();
+        ArrayList<Integer> to = new ArrayList<>();
+
+        for (int i = 0; i < group.size(); i++) {
+            if (top[i][topIndex] > 0) {
+                from.add(group.get(i));
+            }
+            if (top[topIndex][i] > 0) {
+                to.add(group.get(i));
+            }
+        }
+        System.out.println("VM " + vmId + "is connected to: " + to + " and is connected from: " + from);
+        //MyNetworkTopology.getDelay(i-2, j-2);
+        return 0;
     }
 
 }
