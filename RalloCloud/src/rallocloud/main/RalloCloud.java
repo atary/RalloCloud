@@ -98,7 +98,7 @@ public class RalloCloud {
             }
 
             for (BrokerStrategy bs : brokerSet) {
-                createLoad(bs, 2, topologyType.COMPLETE);
+                createLoad(bs, 3, topologyType.COMPLETE);
             }
             
             Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);

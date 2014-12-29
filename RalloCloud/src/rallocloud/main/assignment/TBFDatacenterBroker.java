@@ -36,7 +36,6 @@ public class TBFDatacenterBroker extends BrokerStrategy {
         g.add(vmId);
         Double[][] t = new Double[1][1];
         t[0][0] = 0.0;
-        System.out.println("Group is broken.");
         createGroupVm(g, t);
     }
 
