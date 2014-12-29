@@ -50,7 +50,7 @@ public class RalloCloud {
     public static void main(String[] args) {
 
         try {
-            int num_user = 2;
+            int num_user = 15;
             Calendar calendar = Calendar.getInstance();
             boolean trace_flag = false;
 
