@@ -101,7 +101,8 @@ public class RalloCloud {
                 createLoad(bs, 3, topologyType.COMPLETE);
             }
             
-            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
+            
             //START
             CloudSim.startSimulation();
 

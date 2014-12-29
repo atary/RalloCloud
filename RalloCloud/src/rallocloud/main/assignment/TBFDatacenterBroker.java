@@ -32,15 +32,47 @@ public class TBFDatacenterBroker extends BrokerStrategy {
 
     @Override
     protected void createSingleVm(int vmId) {
-        ArrayList<Integer> g = new ArrayList<>();
-        g.add(vmId);
-        Double[][] t = new Double[1][1];
-        t[0][0] = 0.0;
-        createGroupVm(g, t);
+        List<Integer> group = new ArrayList<>();
+        for (List<Integer> g : VmGroups.keySet()) {
+            if (g.contains(vmId)) {
+                group.addAll(g);
+                break;
+            }
+        }
+        double minDelay = Double.MAX_VALUE;
+        int dcId = 0;
+        for (int d : datacenterIdsList) {
+            double totalDelay = 0;
+            for (int i : group) {
+                Vm vm = VmList.getById(getVmList(), i);
+                if (vm.getHost() != null) {
+                    int dc = vm.getHost().getDatacenter().getId();
+                    double delay = MyNetworkTopology.getDelay(dc, d);
+                    if (delay == 0) {
+                        delay = 100;
+                    }
+                    totalDelay += delay;
+                }
+            }
+            if (totalDelay < minDelay) {
+                minDelay = totalDelay;
+                dcId = d;
+            }
+        }
+        Vm vm = VmList.getById(getVmList(), vmId);
+        Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
+        sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
+
+        /*ArrayList<Integer> g = new ArrayList<>();
+         g.add(vmId);
+         Double[][] t = new Double[1][1];
+         t[0][0] = 0.0;
+         createGroupVm(g, t);*/
     }
 
     @Override
-    protected void createGroupVm(List<Integer> g, Double[][] t) {
+    protected void createGroupVm(List<Integer> g, Double[][] t
+    ) {
         Matching m = matchTopology(t, g);
         if (m == null) {
             throw new NullPointerException();
@@ -120,8 +152,7 @@ public class TBFDatacenterBroker extends BrokerStrategy {
         return mm;
     }
 
-    public boolean compute(Grph g, Grph h, boolean all, List<IntArrayList> matchings, IntArrayList l, int hv,
-            boolean induced) {
+    public boolean compute(Grph g, Grph h, boolean all, List<IntArrayList> matchings, IntArrayList l, int hv, boolean induced) {
         if (!h.getVertices().contains(hv)) {
             if (all) {
                 matchings.add(l.clone());
