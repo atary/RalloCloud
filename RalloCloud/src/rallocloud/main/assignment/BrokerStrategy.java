@@ -55,6 +55,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     public BrokerStrategy(String name) throws Exception {
         super(name);
+        Log.disable();
         VmGroups = new HashMap<>();
     }
 

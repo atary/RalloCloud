@@ -37,101 +37,106 @@ import rallocloud.main.assignment.*;
  *
  * @author Atakan
  */
-public class RalloCloud {
+public class RalloCloudEval {
 
-    private static int vmid = 0;
-    private static int cloudletid = 0;
-    private static HashSet<BrokerStrategy> brokerSet = new HashSet<>();
+    private static int vmid;
+    private static int cloudletid;
+    private static HashSet<BrokerStrategy> brokerSet;
 
     private enum topologyType {
+
         LINEAR, CIRCULAR, COMPLETE, BINARY
     }
 
     public static void main(String[] args) {
 
-        try {
-            int num_user = 2;
-            Calendar calendar = Calendar.getInstance();
-            boolean trace_flag = false;
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("GARR");
+        labels.add("DFN");
+        labels.add("CESNET");
+        labels.add("PSNC");
+        labels.add("FCCN");
+        labels.add("GRNET");
+        labels.add("HEANET");
+        labels.add("I2CAT");
+        labels.add("ICCS");
+        labels.add("KTH");
+        labels.add("NIIF");
+        labels.add("PSNC-2");
+        labels.add("RedIRIS");
+        labels.add("SWITCH");
+        labels.add("NORDUNET");
 
-            CloudSim.init(num_user, calendar, trace_flag);
+        for (int index = 0; index < 6; index++) {
+            try {
+                vmid = 0;
+                cloudletid = 0;
+                brokerSet = new HashSet<>();
 
-            ArrayList<String> labels = new ArrayList<>();
-            labels.add("GARR");
-            labels.add("DFN");
-            labels.add("CESNET");
-            labels.add("PSNC");
-            labels.add("FCCN");
-            labels.add("GRNET");
-            labels.add("HEANET");
-            labels.add("I2CAT");
-            labels.add("ICCS");
-            labels.add("KTH");
-            labels.add("NIIF");
-            labels.add("PSNC-2");
-            labels.add("RedIRIS");
-            labels.add("SWITCH");
-            labels.add("NORDUNET");
+                int num_user = 15;
+                Calendar calendar = Calendar.getInstance();
+                boolean trace_flag = false;
 
-            MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
-            MyNetworkTopology.setNextIdx(MyNetworkTopology.getBwMatrix().length);
+                CloudSim.init(num_user, calendar, trace_flag);
 
-            ArrayList<Datacenter> dcList = new ArrayList<>();
+                MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
+                MyNetworkTopology.setNextIdx(MyNetworkTopology.getBwMatrix().length);
 
-            for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 14000, 16384, 1000000, 1000);
-                dcList.add(dc);
-                MyNetworkTopology.mapNode(dc.getId(), i);
-            }
+                ArrayList<Datacenter> dcList = new ArrayList<>();
 
-            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
-            dcList.add(dc);
-            MyNetworkTopology.mapNode(dc.getId(), 14);
-
-            int i = 0;
-            for (Datacenter d : dcList) {
-                String name = "BROKER" + i;
-                i++;
-                labels.add(name);
-                createBroker(dcList, name, d.getId());
-            }
-
-            for (BrokerStrategy bs : brokerSet) {
-                
-                createLoad(bs, 3, topologyType.COMPLETE);
-                createLoad(bs, 2, topologyType.COMPLETE);
-            }
-            
-            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
-            
-            //START
-            CloudSim.startSimulation();
-
-            List<Cloudlet> clList = new ArrayList<>();
-            ArrayList<List<Cloudlet>> clSepList = new ArrayList<>();
-            HashMap<Integer, Integer> VmsToDatacentersMap = new HashMap<>();
-            for (BrokerStrategy bs : brokerSet) {
-                if (bs.getCloudletSubmittedList().isEmpty()) {
-                    continue;
+                for (int i = 0; i < 14; i++) {
+                    Datacenter dc = createDatacenter(labels.get(i), 14000, 16384, 1000000, 1000);
+                    dcList.add(dc);
+                    MyNetworkTopology.mapNode(dc.getId(), i);
                 }
-                clList.addAll(bs.getCloudletSubmittedList());
-                clSepList.add(bs.getCloudletSubmittedList());
-                VmsToDatacentersMap.putAll(bs.getVmsToDatacentersMap());
+
+                Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
+                dcList.add(dc);
+                MyNetworkTopology.mapNode(dc.getId(), 14);
+
+                int i = 0;
+                for (Datacenter d : dcList) {
+                    String name = "BROKER" + i;
+                    i++;
+                    labels.add(name);
+                    createBroker(dcList, name, d.getId(), index);
+                }
+
+                for (BrokerStrategy bs : brokerSet) {
+
+                    createLoad(bs, 3, topologyType.COMPLETE);
+                    createLoad(bs, 2, topologyType.COMPLETE);
+                }
+
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
+                //START
+                CloudSim.startSimulation();
+
+                List<Cloudlet> clList = new ArrayList<>();
+                ArrayList<List<Cloudlet>> clSepList = new ArrayList<>();
+                HashMap<Integer, Integer> VmsToDatacentersMap = new HashMap<>();
+                for (BrokerStrategy bs : brokerSet) {
+                    if (bs.getCloudletSubmittedList().isEmpty()) {
+                        continue;
+                    }
+                    clList.addAll(bs.getCloudletSubmittedList());
+                    clSepList.add(bs.getCloudletSubmittedList());
+                    VmsToDatacentersMap.putAll(bs.getVmsToDatacentersMap());
+                }
+
+                CloudSim.stopSimulation();
+                //STOP
+
+                System.out.println(brokerSet.iterator().next().getClass().getSimpleName());
+
+                printCloudletList(clList);
+                System.out.println(Statistician.getDSF(clSepList));
+                System.out.println(Statistician.getLDB(clList, dcList));
+                //printVmList(VmsToDatacentersMap, labels);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("The simulation has been terminated due to an unexpected error");
             }
-
-            CloudSim.stopSimulation();
-            //STOP
-
-            printCloudletList(clList);
-            DecimalFormat dft = new DecimalFormat("###.##");
-            System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
-            System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
-
-            printVmList(VmsToDatacentersMap, labels);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("The simulation has been terminated due to an unexpected error");
         }
     }
 
@@ -268,10 +273,10 @@ public class RalloCloud {
         int size = clList.size();
         Cloudlet cloudlet;
 
-        String indent = "\t\t";
-        System.out.println("\n========== CLOUDLETS ==========");
-        System.out.println("CL ID" + indent + "STATUS" + indent
-                + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");
+        /*String indent = "\t\t";
+         System.out.println("\n========== CLOUDLETS ==========");
+         System.out.println("CL ID" + indent + "STATUS" + indent
+         + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");*/
         double AUL = 0;
         double MUL = 0;
         double JRT = 0;
@@ -279,11 +284,11 @@ public class RalloCloud {
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
-            System.out.print(cloudlet.getCloudletId() + indent);
-            System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
-            System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
-                    + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
-                    + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
+            /*System.out.print(cloudlet.getCloudletId() + indent);
+             System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
+             System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
+             + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
+             + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());*/
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();
@@ -291,15 +296,15 @@ public class RalloCloud {
                 MUL = cloudlet.getExecStartTime();
             }
         }
-        System.out.println("\n=========== METRICS ===========");
-        System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
-        System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
-        System.out.println("Average Inter-DC Latency (ADL)\t: \t" + dft.format(Statistician.getADL()) + "s");
-        System.out.println("Maximum Inter-DC Latency (MDL)\t: \t" + dft.format(Statistician.getMDL()) + "s");
-        System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
-        System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
-        System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
-        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");        
+        //System.out.println("\n=========== METRICS ===========");
+        System.out.println(AUL / size);
+        System.out.println(MUL);
+        System.out.println(Statistician.getADL());
+        System.out.println(Statistician.getMDL());
+        System.out.println(JRT / size);
+        System.out.println(JCT / size);
+        System.out.println(Statistician.getTRP(clList));
+        System.out.println(Statistician.getRJR() * 100);
     }
 
     private static void printVmList(Map<Integer, Integer> m, ArrayList<String> l) {
@@ -313,22 +318,43 @@ public class RalloCloud {
         }
     }
 
-    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId) {
+    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId, int index) {
 
         try {
             BrokerStrategy broker;
 
-            broker = new TBFDatacenterBroker(name);
+            switch (index) {
+                case 0:
+                    broker = new AFFDatacenterBroker(name);
+                    break;
+                case 1:
+                    broker = new ANFDatacenterBroker(name);
+                    break;
+                case 2:
+                    broker = new LBGDatacenterBroker(name);
+                    break;
+                case 3:
+                    broker = new LFFDatacenterBroker(name);
+                    break;
+                case 4:
+                    broker = new RANDatacenterBroker(name);
+                    break;
+                case 5:
+                    broker = new TBFDatacenterBroker(name);
+                    break;
+                default:
+                    broker = new RANDatacenterBroker(name);
+            }
+
             broker.setDatacenterList(dcList);
             MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
 
-            System.out.println(broker.getClass().getSimpleName() + " is created");
-
+            //System.out.println(broker.getClass().getSimpleName() + " is created");
             brokerSet.add(broker);
 
             return broker;
         } catch (Exception ex) {
-            Logger.getLogger(RalloCloud.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RalloCloudEval.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
