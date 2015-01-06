@@ -45,7 +45,7 @@ public class RalloCloudEval {
 
     private enum topologyType {
 
-        LINEAR, CIRCULAR, COMPLETE, BINARY
+        LINEAR, CIRCULAR, COMPLETE, STAR
     }
 
     public static void main(String[] args) {
@@ -103,12 +103,11 @@ public class RalloCloudEval {
                 }
 
                 for (BrokerStrategy bs : brokerSet) {
-
                     createLoad(bs, 3, topologyType.COMPLETE);
                     createLoad(bs, 2, topologyType.COMPLETE);
                 }
 
-            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
+                //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
                 //START
                 CloudSim.startSimulation();
 
@@ -200,6 +199,11 @@ public class RalloCloudEval {
             }
             topology[count - 1][0] = 1.0;
             topology[0][count - 1] = 1.0;
+        } else if (type == topologyType.STAR) {
+            for (int i = 1; i < count; i++) {
+                topology[i][0] = 1.0;
+                topology[0][i] = 1.0;
+            }
         }
 
         broker.getVmGroups().put(group, topology);

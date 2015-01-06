@@ -44,7 +44,7 @@ public class RalloCloud {
     private static HashSet<BrokerStrategy> brokerSet = new HashSet<>();
 
     private enum topologyType {
-        LINEAR, CIRCULAR, COMPLETE, BINARY
+        LINEAR, CIRCULAR, COMPLETE, STAR
     }
 
     public static void main(String[] args) {
@@ -195,6 +195,11 @@ public class RalloCloud {
             }
             topology[count - 1][0] = 1.0;
             topology[0][count - 1] = 1.0;
+        } else if (type == topologyType.STAR) {
+            for (int i = 1; i < count; i++) {
+                topology[i][0] = 1.0;
+                topology[0][i] = 1.0;
+            }
         }
 
         broker.getVmGroups().put(group, topology);
