@@ -86,7 +86,7 @@ public class RalloCloudEval {
                 ArrayList<Datacenter> dcList = new ArrayList<>();
 
                 for (int i = 0; i < 14; i++) {
-                    Datacenter dc = createDatacenter(labels.get(i), 14000, 14000, 1000000, 1000);
+                    Datacenter dc = createDatacenter(labels.get(i), 1538, 16384, 1000000, 1000);
                     dcList.add(dc);
                     MyNetworkTopology.mapNode(dc.getId(), i);
                 }
@@ -105,6 +105,7 @@ public class RalloCloudEval {
 
                 for (BrokerStrategy bs : brokerSet) {
                     createLoad(bs, 3, topologyType.LINEAR);
+                    createLoad(bs, 2, topologyType.LINEAR);
                 }
 
                 //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
@@ -128,7 +129,7 @@ public class RalloCloudEval {
 
                 System.out.println(brokerSet.iterator().next().getClass().getSimpleName());
 
-                printCloudletList(clList);
+                printCloudletList(clList, false);
                 System.out.println(Statistician.getDSF(clSepList));
                 System.out.println(Statistician.getLDB(clList, dcList));
                 //printVmList(VmsToDatacentersMap, labels);
@@ -143,8 +144,8 @@ public class RalloCloudEval {
         int brokerId = broker.getId();
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int mips = 1000;
-            int ram = 5000; //vm memory (MB)
+            int mips = 150;
+            int ram = 7000; //vm memory (MB)
             long size = 10000; //image size (MB)
             long bw = 100;
             int pesNumber = 1; //number of cpus
@@ -273,14 +274,16 @@ public class RalloCloudEval {
      *
      * @param clList list of Cloudlets
      */
-    private static void printCloudletList(List<Cloudlet> clList) {
+    private static void printCloudletList(List<Cloudlet> clList, boolean printList) {
         int size = clList.size();
         Cloudlet cloudlet;
 
-        /*String indent = "\t\t";
-         System.out.println("\n========== CLOUDLETS ==========");
-         System.out.println("CL ID" + indent + "STATUS" + indent
-         + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");*/
+        String indent = "\t\t";
+        if (printList) {
+            System.out.println("\n========== CLOUDLETS ==========");
+            System.out.println("CL ID" + indent + "STATUS" + indent
+                    + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");
+        }
         double AUL = 0;
         double MUL = 0;
         double JRT = 0;
@@ -288,11 +291,13 @@ public class RalloCloudEval {
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
-            /*System.out.print(cloudlet.getCloudletId() + indent);
-             System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
-             System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
-             + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
-             + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());*/
+            if (printList) {
+                System.out.print(cloudlet.getCloudletId() + indent);
+                System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
+                System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
+                        + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
+                        + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
+            }
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();

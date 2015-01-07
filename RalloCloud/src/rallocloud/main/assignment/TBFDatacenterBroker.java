@@ -49,7 +49,7 @@ public class TBFDatacenterBroker extends BrokerStrategy {
             }
         }
         double minDelay = Double.MAX_VALUE;
-        int dcId = 0;
+        int dcId = -1;
         for (int d : datacenterIdsList) {
             double totalDelay = 0;
             for (int i : group) {
