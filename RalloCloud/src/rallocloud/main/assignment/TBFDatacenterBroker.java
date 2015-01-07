@@ -11,7 +11,9 @@ import grph.in_memory.InMemoryGrph;
 import grph.util.Matching;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -26,12 +28,19 @@ import rallocloud.main.MyNetworkTopology;
  */
 public class TBFDatacenterBroker extends BrokerStrategy {
 
+    protected Map<Integer, List<Integer>> datacenterRequestedIdsMap;
+
     public TBFDatacenterBroker(String name) throws Exception {
         super(name);
+        datacenterRequestedIdsMap = new HashMap<>();
     }
 
     @Override
     protected void createSingleVm(int vmId) {
+        ArrayList<Integer> requestedDCs = new ArrayList<>();
+        if (datacenterRequestedIdsMap.get(vmId) != null) {
+            requestedDCs.addAll(datacenterRequestedIdsMap.get(vmId));
+        }
         List<Integer> group = new ArrayList<>();
         for (List<Integer> g : VmGroups.keySet()) {
             if (g.contains(vmId)) {
@@ -54,15 +63,24 @@ public class TBFDatacenterBroker extends BrokerStrategy {
                     totalDelay += delay;
                 }
             }
-            if (totalDelay < minDelay) {
-                minDelay = totalDelay;
-                dcId = d;
+            if (!requestedDCs.contains(d)) {
+                if (totalDelay < minDelay) {
+                    minDelay = totalDelay;
+                    dcId = d;
+                }
             }
         }
-        Vm vm = VmList.getById(getVmList(), vmId);
-        Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
-        sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
-
+        if (dcId != -1) {
+            Vm vm = VmList.getById(getVmList(), vmId);
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
+            sendNow(dcId, CloudSimTags.VM_CREATE_ACK, vm);
+            requestedDCs.add(dcId);
+            datacenterRequestedIdsMap.put(vmId, requestedDCs);
+        } else {
+            Log.printLine(CloudSim.clock() + ": " + getName() + ": None of the datacenters were available for VM #" + vmId + ". Retrying...");
+            datacenterRequestedIdsMap.remove(vmId);
+            createSingleVm(vmId);
+        }
         /*ArrayList<Integer> g = new ArrayList<>();
          g.add(vmId);
          Double[][] t = new Double[1][1];
@@ -71,11 +89,21 @@ public class TBFDatacenterBroker extends BrokerStrategy {
     }
 
     @Override
-    protected void createGroupVm(List<Integer> g, Double[][] t
-    ) {
-        Matching m = matchTopology(t, g);
-        if (m == null) {
-            throw new NullPointerException();
+    protected void createGroupVm(List<Integer> g, Double[][] t) {
+        Matching m = null;
+        ArrayList<Matching> ms = matchTopology(t, g);
+        double minDelay = Double.MAX_VALUE;
+        for (Matching match : ms) {
+            double delay = 0;
+            for (int i = 0; i < g.size(); i++) {
+                int datacenterId = match.pattern2graph().get(i) + 2;
+                Vm vm = VmList.getById(getVmList(), g.get(i));
+                delay += MyNetworkTopology.getDelay(datacenterId, vm.getUserId());
+            }
+            if (delay < minDelay) {
+                minDelay = delay;
+                m = match;
+            }
         }
         for (int i = 0; i < g.size(); i++) {
             Vm vm = VmList.getById(getVmList(), g.get(i));
@@ -86,12 +114,13 @@ public class TBFDatacenterBroker extends BrokerStrategy {
         }
     }
 
-    private Matching matchTopology(Double[][] topology, List<Integer> group) {
+    private ArrayList<Matching> matchTopology(Double[][] topology, List<Integer> group) {
         Double[][] bwMatrix = MyNetworkTopology.getBwMatrix();
         Grph g = createGraph(bwMatrix);
         Grph s = createGraph(topology);
 
         List<Matching> m = compute(g, s, false);
+        ArrayList<Matching> r = new ArrayList<>();
         Collections.shuffle(m);
         for (Matching mm : m) {
             boolean good = true;
@@ -102,10 +131,10 @@ public class TBFDatacenterBroker extends BrokerStrategy {
                 }
             }
             if (good) {
-                return mm;
+                r.add(mm);
             }
         }
-        return null;
+        return r;
     }
 
     private Grph createGraph(Double[][] m) {

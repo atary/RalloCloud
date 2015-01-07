@@ -67,7 +67,8 @@ public class RalloCloudEval {
         labels.add("SWITCH");
         labels.add("NORDUNET");
 
-        for (int index = 0; index < 6; index++) {
+        int index = 5;
+        for (int k = 0; k < 1; k++) {
             try {
                 vmid = 0;
                 cloudletid = 0;
@@ -85,7 +86,7 @@ public class RalloCloudEval {
                 ArrayList<Datacenter> dcList = new ArrayList<>();
 
                 for (int i = 0; i < 14; i++) {
-                    Datacenter dc = createDatacenter(labels.get(i), 14000, 16384, 1000000, 1000);
+                    Datacenter dc = createDatacenter(labels.get(i), 14000, 14000, 1000000, 1000);
                     dcList.add(dc);
                     MyNetworkTopology.mapNode(dc.getId(), i);
                 }
@@ -103,8 +104,7 @@ public class RalloCloudEval {
                 }
 
                 for (BrokerStrategy bs : brokerSet) {
-                    createLoad(bs, 3, topologyType.COMPLETE);
-                    createLoad(bs, 2, topologyType.COMPLETE);
+                    createLoad(bs, 3, topologyType.LINEAR);
                 }
 
                 //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
@@ -143,9 +143,9 @@ public class RalloCloudEval {
         int brokerId = broker.getId();
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int mips = 3000;
+            int mips = 1000;
+            int ram = 5000; //vm memory (MB)
             long size = 10000; //image size (MB)
-            int ram = 512; //vm memory (MB)
             long bw = 100;
             int pesNumber = 1; //number of cpus
             String vmm = "Xen"; //VMM name
