@@ -144,8 +144,8 @@ public class RalloCloudEval {
         int brokerId = broker.getId();
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int mips = 150;
-            int ram = 7000; //vm memory (MB)
+            int mips = 50;
+            int ram = 1024 * 5; //vm memory (MB)
             long size = 10000; //image size (MB)
             long bw = 100;
             int pesNumber = 1; //number of cpus
@@ -156,9 +156,9 @@ public class RalloCloudEval {
             broker.getVmList().add(virtualMachine);
             broker.getAllVmList().add(virtualMachine);
 
-            long length = 30000;
-            long fileSize = 3000;
-            long outputSize = 3000;
+            long length = 150;
+            long fileSize = 15;
+            long outputSize = 15;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
