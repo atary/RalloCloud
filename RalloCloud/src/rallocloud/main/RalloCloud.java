@@ -44,6 +44,7 @@ public class RalloCloud {
     private static HashSet<BrokerStrategy> brokerSet = new HashSet<>();
 
     private enum topologyType {
+
         LINEAR, CIRCULAR, COMPLETE, STAR
     }
 
@@ -98,13 +99,12 @@ public class RalloCloud {
             }
 
             for (BrokerStrategy bs : brokerSet) {
-                
+
                 createLoad(bs, 3, topologyType.COMPLETE);
                 createLoad(bs, 2, topologyType.COMPLETE);
             }
-            
+
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
-            
             //START
             CloudSim.startSimulation();
 
@@ -204,6 +204,7 @@ public class RalloCloud {
         }
 
         broker.getVmGroups().put(group, topology);
+        broker.getGroupTimes().put(group, (double) count * 20);
 
         return topology;
     }
@@ -305,7 +306,7 @@ public class RalloCloud {
         System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
         System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
         System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
-        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");        
+        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
     }
 
     private static void printVmList(Map<Integer, Integer> m, ArrayList<String> l) {
