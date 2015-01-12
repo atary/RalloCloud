@@ -94,6 +94,7 @@ public class RalloCloud {
                 i++;
                 labels.add(name);
                 createBroker(dcList, name, d.getId());
+                break;
             }
 
             for (BrokerStrategy bs : brokerSet) {
@@ -102,7 +103,7 @@ public class RalloCloud {
                 createLoad(bs, 2, topologyType.COMPLETE);
             }
             
-            Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
+            //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
             
             //START
             CloudSim.startSimulation();
@@ -323,7 +324,7 @@ public class RalloCloud {
         try {
             BrokerStrategy broker;
 
-            broker = new TBFDatacenterBroker(name);
+            broker = new ANFDatacenterBroker(name);
             broker.setDatacenterList(dcList);
             MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
 

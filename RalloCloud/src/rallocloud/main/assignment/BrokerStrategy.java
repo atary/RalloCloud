@@ -55,7 +55,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
     public BrokerStrategy(String name) throws Exception {
         super(name);
-        Log.disable();
+        //Log.disable();
         VmGroups = new HashMap<>();
     }
 
@@ -210,6 +210,33 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     public void shutdownEntity() {
         Log.printLine(getName() + " is shutting down...");
         Statistician.setEndTime(CloudSim.clock());
+    }
+
+    protected void sendAt(int entityId, double time, int cloudSimTag, Object data) {
+        if (entityId < 0) {
+            return;
+        }
+
+        double delay = time - CloudSim.clock();
+
+        // if delay is -ve, then it doesn't make sense. So resets to 0.0
+        if (delay < 0) {
+            delay = 0;
+        }
+
+        if (entityId < 0) {
+            Log.printLine(getName() + ".send(): Error - " + "invalid entity id " + entityId);
+            return;
+        }
+
+        int srcId = getId();
+        if (entityId != srcId) {// does not delay self messages
+            if (MyNetworkTopology.getDelay(srcId, entityId) > delay) {
+                delay = MyNetworkTopology.getDelay(srcId, entityId);
+            }
+        }
+
+        schedule(entityId, delay, cloudSimTag, data);
     }
 
 }
