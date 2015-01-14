@@ -14,7 +14,7 @@ public class Distribution {
             System.out.println(p.sample());
         }
 
-        UniformRealDistribution u = new UniformRealDistribution(0, 200);
+        UniformRealDistribution u = new UniformRealDistribution(0, 200); //İstek zamanı için
         for (int i = 0; i < 10; i++) {
             System.out.println(u.sample());
         }
