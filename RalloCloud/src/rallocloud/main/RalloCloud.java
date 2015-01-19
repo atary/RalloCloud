@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.Datacenter;
@@ -95,13 +97,11 @@ public class RalloCloud {
                 i++;
                 labels.add(name);
                 createBroker(dcList, name, d.getId());
-                break;
             }
 
             for (BrokerStrategy bs : brokerSet) {
-
-                createLoad(bs, 3, topologyType.COMPLETE);
-                createLoad(bs, 2, topologyType.COMPLETE);
+                createVmGroup(bs, 3, 200, topologyType.LINEAR);
+                createVmGroup(bs, 2, 200, topologyType.COMPLETE);
             }
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
@@ -136,8 +136,16 @@ public class RalloCloud {
         }
     }
 
-    private static Double[][] createLoad(BrokerStrategy broker, int count, topologyType type) {
+    private static Double[][] createVmGroup(BrokerStrategy broker, int count, double time, topologyType type) {
         int brokerId = broker.getId();
+
+        PoissonDistribution pd = new PoissonDistribution(count); //for VM count
+        count = pd.sample();
+        UniformRealDistribution urd = new UniformRealDistribution(0, time); //For request time
+        time = urd.sample();
+        
+        if(count == 0) count++;
+
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int mips = 3000;
@@ -204,7 +212,7 @@ public class RalloCloud {
         }
 
         broker.getVmGroups().put(group, topology);
-        broker.getGroupTimes().put(group, (double) count * 20);
+        broker.getGroupTimes().put(group, time);
 
         return topology;
     }
@@ -278,7 +286,7 @@ public class RalloCloud {
         String indent = "\t\t";
         System.out.println("\n========== CLOUDLETS ==========");
         System.out.println("CL ID" + indent + "STATUS" + indent
-                + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker ID");
+                + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Durat" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker" + indent + "Group");
         double AUL = 0;
         double MUL = 0;
         double JRT = 0;
@@ -286,11 +294,31 @@ public class RalloCloud {
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
+
+            BrokerStrategy broker = null;
+
+            for (BrokerStrategy b : brokerSet) {
+                if(b.getId() == cloudlet.getUserId()){
+                    broker = b;
+                    break;
+                }
+            }
+            
+            List<Integer> group = null;
+            
+            for(List<Integer> l : broker.getVmGroups().keySet()){
+                if(l.contains(cloudlet.getVmId())){
+                    group = l;
+                }
+            }
+            
+            double time = broker.getGroupTimes().get(group);
+
             System.out.print(cloudlet.getCloudletId() + indent);
             System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
             System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
-                    + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(cloudlet.getExecStartTime())
-                    + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId());
+                    + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(time) + indent + dft.format(cloudlet.getExecStartTime())
+                    + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId() + indent + group);
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();
