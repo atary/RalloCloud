@@ -38,8 +38,6 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     protected Map<List<Integer>, Double[][]> VmGroups;
     
     protected Map<List<Integer>, Double> GroupTimes;
-    
-    protected Map<Integer, Long> originalLengths;
 
     public ArrayList<Vm> getAllVmList() {
         return AllVmList;
@@ -60,17 +58,12 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     public Map<List<Integer>, Double> getGroupTimes() {
         return GroupTimes;
     }
-
-    public Map<Integer, Long> getOriginalLengths() {
-        return originalLengths;
-    }
     
     public BrokerStrategy(String name) throws Exception {
         super(name);
         Log.disable();
         VmGroups = new HashMap<>();
         GroupTimes = new HashMap<>();
-        originalLengths = new HashMap<>();
     }
 
     @Override
@@ -148,7 +141,6 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
-                originalLengths.put(vmId, cloudlet.getCloudletLength());
                 cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet, vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
