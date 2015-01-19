@@ -122,13 +122,21 @@ public class RalloCloud {
 
             CloudSim.stopSimulation();
             //STOP
-            
-            printCloudletList(clList);
-            DecimalFormat dft = new DecimalFormat("###.##");
-            System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
-            System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
 
-            printVmList(VmsToDatacentersMap, labels);
+            boolean printList = false; //Human readable?
+
+            System.out.println("");
+            printCloudletList(clList, printList);
+            if (printList) {
+                DecimalFormat dft = new DecimalFormat("###.##");
+                System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
+                System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
+                printVmList(VmsToDatacentersMap, labels);
+            } else {
+                System.out.println(Statistician.getDSF(clSepList));
+                System.out.println(Statistician.getLDB(clList, dcList));
+            }
+            System.out.println("");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,10 +151,11 @@ public class RalloCloud {
         count = pd.sample();
         UniformRealDistribution urd = new UniformRealDistribution(0, time); //For request time
         time = urd.sample();
-        
+
         //System.out.println(broker.getId() + "\t" + time + "\t" + count);
-        
-        if(count == 0) return null;
+        if (count == 0) {
+            return null;
+        }
 
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -281,14 +290,16 @@ public class RalloCloud {
      *
      * @param clList list of Cloudlets
      */
-    private static void printCloudletList(List<Cloudlet> clList) {
+    private static void printCloudletList(List<Cloudlet> clList, boolean list) {
         int size = clList.size();
         Cloudlet cloudlet;
 
         String indent = "\t\t";
-        System.out.println("\n========== CLOUDLETS ==========");
-        System.out.println("CL ID" + indent + "STATUS" + indent
-                + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Durat" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker" + indent + "Group");
+        if (list) {
+            System.out.println("\n========== CLOUDLETS ==========");
+            System.out.println("CL ID" + indent + "STATUS" + indent
+                    + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Durat" + indent + "Time" + indent + "Start" + indent + "Finish" + indent + "Broker" + indent + "Group");
+        }
         double AUL = 0;
         double MUL = 0;
         double JRT = 0;
@@ -300,27 +311,28 @@ public class RalloCloud {
             BrokerStrategy broker = null;
 
             for (BrokerStrategy b : brokerSet) {
-                if(b.getId() == cloudlet.getUserId()){
+                if (b.getId() == cloudlet.getUserId()) {
                     broker = b;
                     break;
                 }
             }
-            
+
             List<Integer> group = null;
-            
-            for(List<Integer> l : broker.getVmGroups().keySet()){
-                if(l.contains(cloudlet.getVmId())){
+
+            for (List<Integer> l : broker.getVmGroups().keySet()) {
+                if (l.contains(cloudlet.getVmId())) {
                     group = l;
                 }
             }
-            
-            double time = broker.getGroupTimes().get(group);
 
-            System.out.print(cloudlet.getCloudletId() + indent);
-            System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
-            System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
-                    + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(time) + indent + dft.format(cloudlet.getExecStartTime())
-                    + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId() + indent + group);
+            double time = broker.getGroupTimes().get(group);
+            if (list) {
+                System.out.print(cloudlet.getCloudletId() + indent);
+                System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
+                System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
+                        + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(time) + indent + dft.format(cloudlet.getExecStartTime())
+                        + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId() + indent + group);
+            }
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();
@@ -328,15 +340,26 @@ public class RalloCloud {
                 MUL = cloudlet.getExecStartTime();
             }
         }
-        System.out.println("\n=========== METRICS ===========");
-        System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
-        System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
-        System.out.println("Average Inter-DC Latency (ADL)\t: \t" + dft.format(Statistician.getADL()) + "s");
-        System.out.println("Maximum Inter-DC Latency (MDL)\t: \t" + dft.format(Statistician.getMDL()) + "s");
-        System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
-        System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
-        System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
-        System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
+        if (list) {
+            System.out.println("\n=========== METRICS ===========");
+            System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
+            System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
+            System.out.println("Average Inter-DC Latency (ADL)\t: \t" + dft.format(Statistician.getADL()) + "s");
+            System.out.println("Maximum Inter-DC Latency (MDL)\t: \t" + dft.format(Statistician.getMDL()) + "s");
+            System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
+            System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
+            System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
+            System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
+        } else {
+            System.out.println(AUL / size);
+            System.out.println(MUL);
+            System.out.println(Statistician.getADL());
+            System.out.println(Statistician.getMDL());
+            System.out.println(JRT / size);
+            System.out.println(JCT / size);
+            System.out.println(Statistician.getTRP(clList));
+            System.out.println(Statistician.getRJR() * 100);
+        }
     }
 
     private static void printVmList(Map<Integer, Integer> m, ArrayList<String> l) {
