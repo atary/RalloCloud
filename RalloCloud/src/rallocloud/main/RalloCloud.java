@@ -123,12 +123,12 @@ public class RalloCloud {
             CloudSim.stopSimulation();
             //STOP
             
-            /*printCloudletList(clList);
+            printCloudletList(clList);
             DecimalFormat dft = new DecimalFormat("###.##");
             System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
             System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
 
-            printVmList(VmsToDatacentersMap, labels);*/
+            printVmList(VmsToDatacentersMap, labels);
 
         } catch (Exception e) {
             e.printStackTrace();
