@@ -92,25 +92,31 @@ public class TBFDatacenterBroker extends BrokerStrategy {
     protected void createGroupVm(List<Integer> g, Double[][] t) {
         Matching m = null;
         ArrayList<Matching> ms = matchTopology(t, g);
-        double minDelay = Double.MAX_VALUE;
-        for (Matching match : ms) {
-            double delay = 0;
+        if (ms.isEmpty()) {
+            for (int vmId : g) {
+                createSingleVm(vmId);
+            }
+        } else {
+            double minDelay = Double.MAX_VALUE;
+            for (Matching match : ms) {
+                double delay = 0;
+                for (int i = 0; i < g.size(); i++) {
+                    int datacenterId = match.pattern2graph().get(i) + 2;
+                    Vm vm = VmList.getById(getVmList(), g.get(i));
+                    delay += MyNetworkTopology.getDelay(datacenterId, vm.getUserId());
+                }
+                if (delay < minDelay) {
+                    minDelay = delay;
+                    m = match;
+                }
+            }
             for (int i = 0; i < g.size(); i++) {
-                int datacenterId = match.pattern2graph().get(i) + 2;
                 Vm vm = VmList.getById(getVmList(), g.get(i));
-                delay += MyNetworkTopology.getDelay(datacenterId, vm.getUserId());
+                int datacenterId = m.pattern2graph().get(i) + 2;
+                setVmsRequested(getVmsRequested() + 1);
+                Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
+                sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
             }
-            if (delay < minDelay) {
-                minDelay = delay;
-                m = match;
-            }
-        }
-        for (int i = 0; i < g.size(); i++) {
-            Vm vm = VmList.getById(getVmList(), g.get(i));
-            int datacenterId = m.pattern2graph().get(i) + 2;
-            setVmsRequested(getVmsRequested() + 1);
-            Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-            sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
         }
     }
 
