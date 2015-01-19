@@ -41,7 +41,11 @@ public class ANFDatacenterBroker extends BrokerStrategy {
             setVmsRequested(getVmsRequested() + 1);
             int datacenterId = datacenterIdsList.get(i++ % datacenterIdsList.size());
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-            sendAt(datacenterId, GroupTimes.get(g), CloudSimTags.VM_CREATE_ACK, vm);
+            if (GroupTimes.containsKey(g)) {
+                sendAt(datacenterId, GroupTimes.get(g), CloudSimTags.VM_CREATE_ACK, vm);
+            } else {
+                sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
+            }
         }
     }
 }
