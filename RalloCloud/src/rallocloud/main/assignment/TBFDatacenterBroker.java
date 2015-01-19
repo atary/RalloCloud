@@ -115,7 +115,7 @@ public class TBFDatacenterBroker extends BrokerStrategy {
                 int datacenterId = m.pattern2graph().get(i) + 2;
                 setVmsRequested(getVmsRequested() + 1);
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-                sendNow(datacenterId, CloudSimTags.VM_CREATE_ACK, vm);
+                sendAt(datacenterId, GroupTimes.get(g), CloudSimTags.VM_CREATE_ACK, vm);
             }
         }
     }

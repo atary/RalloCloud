@@ -36,7 +36,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     protected static ArrayList<Vm> AllVmList = new ArrayList<>(); //All VMs from all brokers
 
     protected Map<List<Integer>, Double[][]> VmGroups;
-    
+
     protected Map<List<Integer>, Double> GroupTimes;
 
     public ArrayList<Vm> getAllVmList() {
@@ -58,7 +58,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     public Map<List<Integer>, Double> getGroupTimes() {
         return GroupTimes;
     }
-    
+
     public BrokerStrategy(String name) throws Exception {
         super(name);
         Log.disable();
@@ -244,6 +244,24 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         }
 
         schedule(entityId, delay, cloudSimTag, data);
+    }
+
+    private List<Integer> getVmGroup(int vmId) {
+        for (List<Integer> g : VmGroups.keySet()) {
+            if (g.contains(vmId)) {
+                return g;
+            }
+        }
+        return null;
+    }
+
+    protected double getVmTime(int vmId) {
+        List<Integer> l = getVmGroup(vmId);
+        //if (GroupTimes.containsKey(l)) {
+            return GroupTimes.get(l);
+        /*} else {
+            return 0;
+        }*/
     }
 
 }
