@@ -43,7 +43,7 @@ public class RalloCloud {
 
     private static int vmid = 0;
     private static int cloudletid = 0;
-    private static HashSet<BrokerStrategy> brokerSet = new HashSet<>();
+    private static final HashSet<BrokerStrategy> brokerSet = new HashSet<>();
 
     private enum topologyType {
 
@@ -82,7 +82,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 14000, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 1538, 16384, 1000000, 1000);
                 dcList.add(dc);
                 MyNetworkTopology.mapNode(dc.getId(), i);
             }
@@ -100,8 +100,8 @@ public class RalloCloud {
             }
 
             for (BrokerStrategy bs : brokerSet) {
-                createVmGroup(bs, 3, 200, topologyType.LINEAR);
-                createVmGroup(bs, 2, 200, topologyType.COMPLETE);
+                createVmGroup(bs, 3, 40, topologyType.LINEAR);
+                createVmGroup(bs, 2, 40, topologyType.COMPLETE);
             }
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
@@ -139,7 +139,7 @@ public class RalloCloud {
             System.out.println("");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("The simulation has been terminated due to an unexpected error");
         }
     }
@@ -159,10 +159,10 @@ public class RalloCloud {
 
         ArrayList<Integer> group = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            int mips = 3000;
+            int mips = 50;
             long size = 10000; //image size (MB)
-            int ram = 512; //vm memory (MB)
-            long bw = 100;
+            int ram = 1024; //vm memory (MB)
+            long bw = 10;
             int pesNumber = 1; //number of cpus
             String vmm = "Xen"; //VMM name
 
@@ -171,9 +171,9 @@ public class RalloCloud {
             broker.getVmList().add(virtualMachine);
             broker.getAllVmList().add(virtualMachine);
 
-            long length = 30000;
-            long fileSize = 3000;
-            long outputSize = 3000;
+            long length = 150;
+            long fileSize = 15;
+            long outputSize = 15;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
@@ -233,11 +233,11 @@ public class RalloCloud {
         // Here are the steps needed to create a PowerDatacenter:
         // 1. We need to create a list to store
         //    our machine
-        List<Host> hostList = new ArrayList<Host>();
+        List<Host> hostList = new ArrayList<>();
 
         // 2. A Machine contains one or more PEs or CPUs/Cores.
         // In this example, it will have only one core.
-        List<Pe> peList = new ArrayList<Pe>();
+        List<Pe> peList = new ArrayList<>();
 
         // 3. Create PEs and add these into a list.
         peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store Pe id and MIPS Rating
@@ -268,7 +268,7 @@ public class RalloCloud {
         double costPerMem = 0.05;		// the cost of using memory in this resource
         double costPerStorage = 0.001;	// the cost of using storage in this resource
         double costPerBw = 0.0;			// the cost of using bw in this resource
-        LinkedList<Storage> storageList = new LinkedList<Storage>();	//we are not adding SAN devices by now
+        LinkedList<Storage> storageList = new LinkedList<>();	//we are not adding SAN devices by now
 
         DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
                 arch, os, vmm, hostList, time_zone, cost, costPerMem,
@@ -279,7 +279,7 @@ public class RalloCloud {
         try {
             datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return datacenter;
