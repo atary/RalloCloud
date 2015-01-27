@@ -98,7 +98,8 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Statistician.trial();
         if (result == CloudSimTags.TRUE) {
             getVmsToDatacentersMap().put(vmId, datacenterId);
-            getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
+            getVmsCreatedList().add(VmList.getById(getVmList(), vmId));    
+
             Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId + " has been created in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
 
             boolean ready = true;
@@ -144,6 +145,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet, vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
+                
                 //cloudletsSubmitted++;
                 getCloudletSubmittedList().add(cloudlet);
             }
@@ -258,10 +260,10 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
     protected double getVmTime(int vmId) {
         List<Integer> l = getVmGroup(vmId);
         //if (GroupTimes.containsKey(l)) {
-            return GroupTimes.get(l);
+        return GroupTimes.get(l);
         /*} else {
-            return 0;
-        }*/
+         return 0;
+         }*/
     }
 
 }

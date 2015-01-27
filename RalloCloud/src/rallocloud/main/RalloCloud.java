@@ -123,7 +123,7 @@ public class RalloCloud {
             CloudSim.stopSimulation();
             //STOP
 
-            boolean printList = false; //Human readable?
+            boolean printList = true; //Human readable?
 
             System.out.println("");
             printCloudletList(clList, printList);
@@ -264,7 +264,7 @@ public class RalloCloud {
         String os = "Linux";          // operating system
         String vmm = "Xen";
         double time_zone = 10.0;         // time zone this resource located
-        double cost = 3.0;              // the cost of using processing in this resource
+        double cost = 3;             // the cost of using processing in this resource
         double costPerMem = 0.05;		// the cost of using memory in this resource
         double costPerStorage = 0.001;	// the cost of using storage in this resource
         double costPerBw = 0.0;			// the cost of using bw in this resource
@@ -299,7 +299,7 @@ public class RalloCloud {
             System.out.println("\n========== CLOUDLETS ==========");
             System.out.println("CL ID" + indent + "STATUS" + indent
                     + "DC Name" + indent + "DC ID" + indent + "VM ID" + indent + "Durat" + indent + "Time"
-                    + indent + "Start" + indent + "Finish" + indent + "Broker" + indent + "Group");
+                    + indent + "Start" + indent + "Finish" + indent + "Broker" + indent + "Group" + indent + "Cost");
         }
         double AUL = 0;
         double MUL = 0;
@@ -332,7 +332,7 @@ public class RalloCloud {
                 System.out.print(cloudlet.getCloudletStatus() == Cloudlet.SUCCESS ? "SUCCESS" : "OTHER");
                 System.out.println(indent + cloudlet.getResourceName(cloudlet.getResourceId()) + indent + cloudlet.getResourceId() + indent + cloudlet.getVmId()
                         + indent + dft.format(cloudlet.getActualCPUTime()) + indent + dft.format(time) + indent + dft.format(cloudlet.getExecStartTime())
-                        + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId() + indent + group);
+                        + indent + dft.format(cloudlet.getFinishTime()) + indent + cloudlet.getUserId() + indent + group + indent + cloudlet.getCostPerSec());
             }
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
