@@ -99,6 +99,24 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             
             Datacenter dc = VmList.getById(getVmList(), vmId).getHost().getDatacenter();
             
+            double ramCap = 0;
+            double ramUse = 0;
+
+            for (int i = 0; i < dc.getHostList().size(); i++) {
+                ramCap = dc.getHostList().get(i).getRam();
+            }
+
+            for (Vm v : AllVmList) {
+                //if (vmsToDatacentersMap.get(v.getId()) == di) {
+                if (v.getHost() != null && v.getHost().getDatacenter().getId() == datacenterId) {
+                    ramUse += v.getRam();
+                }
+            }
+
+            double util = ramUse / ramCap;
+            
+            dc.getCharacteristics().setCostPerSecond(1+util);
+            
             boolean ready = true;
             List<Integer> group = null;
             for (List<Integer> g : VmGroups.keySet()) {
