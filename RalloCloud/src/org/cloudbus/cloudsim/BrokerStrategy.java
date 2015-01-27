@@ -115,7 +115,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
             double util = ramUse / ramCap;
             
-            dc.getCharacteristics().setCostPerSecond(1+util);
+            dc.getCharacteristics().setCostPerSecond(util);
             
             boolean ready = true;
             List<Integer> group = null;

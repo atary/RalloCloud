@@ -123,7 +123,7 @@ public class RalloCloud {
             CloudSim.stopSimulation();
             //STOP
 
-            boolean printList = true; //Human readable?
+            boolean printList = false; //Human readable?
 
             System.out.println("");
             printCloudletList(clList, printList);
@@ -133,8 +133,8 @@ public class RalloCloud {
                 System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
                 printVmList(VmsToDatacentersMap, labels);
             } else {
-                System.out.println(Statistician.getDSF(clSepList));
-                System.out.println(Statistician.getLDB(clList, dcList));
+                //System.out.println(Statistician.getDSF(clSepList));
+                //System.out.println(Statistician.getLDB(clList, dcList));
             }
             System.out.println("");
 
@@ -161,7 +161,7 @@ public class RalloCloud {
         for (int i = 0; i < count; i++) {
             int mips = 50;
             long size = 10000; //image size (MB)
-            int ram = 1024; //vm memory (MB)
+            int ram = 1024 * 4; //vm memory (MB)
             long bw = 10;
             int pesNumber = 1; //number of cpus
             String vmm = "Xen"; //VMM name
@@ -306,6 +306,7 @@ public class RalloCloud {
         double JRT = 0;
         double JCT = 0;
         double CST = 0;
+        double AVC = 0;
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
@@ -339,6 +340,7 @@ public class RalloCloud {
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();
             CST += cloudlet.getCostPerSec() * cloudlet.getActualCPUTime();
+            AVC += cloudlet.getCostPerSec();
             if (cloudlet.getExecStartTime() > MUL) {
                 MUL = cloudlet.getExecStartTime();
             }
@@ -354,16 +356,18 @@ public class RalloCloud {
             System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
             System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
             System.out.println("Total Cost (CST)\t\t: \t" + dft.format(CST));
+            System.out.println("Average Cost (AVC)\t\t: \t" + dft.format(AVC / size));
         } else {
-            System.out.println(AUL / size);
-            System.out.println(MUL);
-            System.out.println(Statistician.getADL());
-            System.out.println(Statistician.getMDL());
-            System.out.println(JRT / size);
-            System.out.println(JCT / size);
-            System.out.println(Statistician.getTRP(clList));
-            System.out.println(Statistician.getRJR() * 100);
+            /*System.out.println(AUL / size);
+             System.out.println(MUL);
+             System.out.println(Statistician.getADL());
+             System.out.println(Statistician.getMDL());
+             System.out.println(JRT / size);
+             System.out.println(JCT / size);
+             System.out.println(Statistician.getTRP(clList));
+             System.out.println(Statistician.getRJR() * 100);*/
             System.out.println(CST);
+            System.out.println(AVC / size);
         }
     }
 
@@ -383,7 +387,7 @@ public class RalloCloud {
         try {
             BrokerStrategy broker;
 
-            broker = new TBFDatacenterBroker(name);
+            broker = new LFFDatacenterBroker(name);
             broker.setDatacenterList(dcList);
             MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
 
