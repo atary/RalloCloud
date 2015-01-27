@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.cloudbus.cloudsim.Log;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.lists.VmList;
@@ -169,10 +167,10 @@ public class TBFDatacenterBroker extends BrokerStrategy {
         }
 
         IntArrayList l = new IntArrayList();
-        List<IntArrayList> matchings = new ArrayList<IntArrayList>();
+        List<IntArrayList> matchings = new ArrayList<>();
 
         compute(g, p, true, matchings, l, 0, induced);
-        List<Matching> mm = new ArrayList<Matching>();
+        List<Matching> mm = new ArrayList<>();
 
         for (IntArrayList l2 : matchings) {
             Matching m = new Matching();
@@ -197,7 +195,7 @@ public class TBFDatacenterBroker extends BrokerStrategy {
             }
         }
 
-        boolean mistake = false;
+        boolean mistake;
 
         for (int gv : g.getVertices().toIntArray()) {
             if (l.contains(gv)) {
@@ -220,9 +218,7 @@ public class TBFDatacenterBroker extends BrokerStrategy {
                 }
             }
 
-            if (mistake) {
-                continue;
-            } else {
+            if (!mistake) {
                 l.add(gv);
 
                 if (compute(g, h, all, matchings, l, hv + 1, induced)) {

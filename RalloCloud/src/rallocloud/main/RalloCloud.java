@@ -264,7 +264,7 @@ public class RalloCloud {
         String os = "Linux";          // operating system
         String vmm = "Xen";
         double time_zone = 10.0;         // time zone this resource located
-        double cost = 3;             // the cost of using processing in this resource
+        double cost = 1;             // the cost of using processing in this resource
         double costPerMem = 0.05;		// the cost of using memory in this resource
         double costPerStorage = 0.001;	// the cost of using storage in this resource
         double costPerBw = 0.0;			// the cost of using bw in this resource
