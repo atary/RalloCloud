@@ -305,6 +305,7 @@ public class RalloCloud {
         double MUL = 0;
         double JRT = 0;
         double JCT = 0;
+        double CST = 0;
         DecimalFormat dft = new DecimalFormat("###.##");
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
@@ -337,6 +338,7 @@ public class RalloCloud {
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
             JCT += cloudlet.getFinishTime();
+            CST += cloudlet.getCostPerSec() * cloudlet.getActualCPUTime();
             if (cloudlet.getExecStartTime() > MUL) {
                 MUL = cloudlet.getExecStartTime();
             }
@@ -351,6 +353,7 @@ public class RalloCloud {
             System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
             System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
             System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
+            System.out.println("Total Cost (CST)\t\t: \t" + dft.format(CST));
         } else {
             System.out.println(AUL / size);
             System.out.println(MUL);
@@ -360,6 +363,7 @@ public class RalloCloud {
             System.out.println(JCT / size);
             System.out.println(Statistician.getTRP(clList));
             System.out.println(Statistician.getRJR() * 100);
+            System.out.println(CST);
         }
     }
 
