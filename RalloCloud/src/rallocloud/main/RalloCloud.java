@@ -5,6 +5,7 @@
  */
 package rallocloud.main;
 
+import org.cloudbus.cloudsim.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,7 +34,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import rallocloud.main.assignment.*;
 
 /**
  *

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rallocloud.main.assignment;
+package org.cloudbus.cloudsim;
 
 import com.carrotsearch.hppc.IntArrayList;
 import grph.Grph;

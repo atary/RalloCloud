@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rallocloud.main.assignment;
+package org.cloudbus.cloudsim;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,11 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Datacenter;
-import org.cloudbus.cloudsim.DatacenterCharacteristics;
-import org.cloudbus.cloudsim.Log;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
@@ -101,7 +96,9 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             getVmsCreatedList().add(VmList.getById(getVmList(), vmId));    
 
             Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId + " has been created in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-
+            
+            Datacenter dc = VmList.getById(getVmList(), vmId).getHost().getDatacenter();
+            
             boolean ready = true;
             List<Integer> group = null;
             for (List<Integer> g : VmGroups.keySet()) {
