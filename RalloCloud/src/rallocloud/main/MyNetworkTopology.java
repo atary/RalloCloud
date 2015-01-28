@@ -5,7 +5,6 @@
  */
 package rallocloud.main;
 
-import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.NetworkTopology;
 
 /**
