@@ -5,7 +5,6 @@
  */
 package rallocloud.main;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ public class Statistician {
     private static int RJR = 0;
     private static int size = 0;
     private static double endTime;
-    private static ArrayList<Double> delays = new ArrayList<>();
+    private static final ArrayList<Double> delays = new ArrayList<>();
 
     public static void addDelay(double d) {
         delays.add(d);
