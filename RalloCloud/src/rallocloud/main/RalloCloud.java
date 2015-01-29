@@ -5,6 +5,9 @@
  */
 package rallocloud.main;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import org.cloudbus.cloudsim.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -44,6 +47,8 @@ public class RalloCloud {
     private static int vmid = 0;
     private static int cloudletid = 0;
     private static final HashSet<BrokerStrategy> brokerSet = new HashSet<>();
+    private static PrintWriter out;
+    private static String strategy;
 
     private enum topologyType {
 
@@ -53,6 +58,15 @@ public class RalloCloud {
     public static void main(String[] args) {
 
         try {
+            boolean printList = true; //Human readable?
+            if (args.length == 1) {
+                printList = false;
+                strategy = args[0];
+                out = new PrintWriter(new BufferedWriter(new FileWriter("out/" + args[0] + ".txt", true)));
+            } else {
+                strategy = "LFF";
+            }
+
             int num_user = 15;
             Calendar calendar = Calendar.getInstance();
             boolean trace_flag = false;
@@ -121,9 +135,7 @@ public class RalloCloud {
             }
 
             CloudSim.stopSimulation();
-            //STOP
-
-            boolean printList = false; //Human readable?
+            //STOP            
 
             System.out.println("");
             printCloudletList(clList, printList);
@@ -133,8 +145,10 @@ public class RalloCloud {
                 System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
                 printVmList(VmsToDatacentersMap, labels);
             } else {
-                //System.out.println(Statistician.getDSF(clSepList));
-                //System.out.println(Statistician.getLDB(clList, dcList));
+                out.println(Statistician.getDSF(clSepList));
+                out.println(Statistician.getLDB(clList, dcList));
+                out.println("");
+                out.close();
             }
             System.out.println("");
 
@@ -358,16 +372,16 @@ public class RalloCloud {
             System.out.println("Total Cost (CST)\t\t: \t" + dft.format(CST));
             System.out.println("Average Cost (AVC)\t\t: \t" + dft.format(AVC / size));
         } else {
-            /*System.out.println(AUL / size);
-             System.out.println(MUL);
-             System.out.println(Statistician.getADL());
-             System.out.println(Statistician.getMDL());
-             System.out.println(JRT / size);
-             System.out.println(JCT / size);
-             System.out.println(Statistician.getTRP(clList));
-             System.out.println(Statistician.getRJR() * 100);*/
-            System.out.println(CST);
-            System.out.println(AVC / size);
+            out.println(AUL / size);
+            out.println(MUL);
+            out.println(Statistician.getADL());
+            out.println(Statistician.getMDL());
+            out.println(JRT / size);
+            out.println(JCT / size);
+            out.println(Statistician.getTRP(clList));
+            out.println(Statistician.getRJR() * 100);
+            out.println(CST);
+            out.println(AVC / size);
         }
     }
 
@@ -385,9 +399,32 @@ public class RalloCloud {
     private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId) {
 
         try {
-            BrokerStrategy broker;
+            BrokerStrategy broker = null;
 
-            broker = new LFFDatacenterBroker(name);
+            switch (strategy) {
+                case "AFF":
+                    broker = new AFFDatacenterBroker(name);
+                    break;
+                case "ANF":
+                    broker = new ANFDatacenterBroker(name);
+                    break;
+                case "LBG":
+                    broker = new LBGDatacenterBroker(name);
+                    break;
+                case "LFF":
+                    broker = new LFFDatacenterBroker(name);
+                    break;
+                case "RAN":
+                    broker = new RANDatacenterBroker(name);
+                    break;
+                case "TBF":
+                    broker = new TBFDatacenterBroker(name);
+                    break;
+                default:
+                    System.exit(1);
+                    break;
+            }
+
             broker.setDatacenterList(dcList);
             MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
 
