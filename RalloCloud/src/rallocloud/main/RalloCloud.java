@@ -44,6 +44,7 @@ public class RalloCloud {
     private static final HashSet<BrokerStrategy> brokerSet = new HashSet<>();
     private static PrintWriter out;
     private static String strategy;
+    private static int vmRAM;
 
     private enum topologyType {
 
@@ -54,10 +55,15 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            if (args.length == 1) {
+            vmRAM = 1;
+            if (args.length > 0) {
                 printList = false;
+                if(args.length>1){
+                    vmRAM = Integer.parseInt(args[1]);
+                }
                 strategy = args[0];
-                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + args[0] + ".txt", true)));
+                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + ".txt", true)));
+                out.println(strategy);
             } else {
                 strategy = "LFF";
             }
@@ -170,7 +176,7 @@ public class RalloCloud {
         for (int i = 0; i < count; i++) {
             int mips = 50;
             long size = 10000; //image size (MB)
-            int ram = 1024 * 4; //vm memory (MB)
+            int ram = 1024 * vmRAM; //vm memory (MB)
             long bw = 10;
             int pesNumber = 1; //number of cpus
             String vmm = "Xen"; //VMM name
