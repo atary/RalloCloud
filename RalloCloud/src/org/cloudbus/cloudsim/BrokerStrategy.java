@@ -93,12 +93,12 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         Statistician.trial();
         if (result == CloudSimTags.TRUE) {
             getVmsToDatacentersMap().put(vmId, datacenterId);
-            getVmsCreatedList().add(VmList.getById(getVmList(), vmId));    
+            getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
 
             Log.printLine(CloudSim.clock() + ": " + getName() + ": VM #" + vmId + " has been created in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-            
+
             Datacenter dc = VmList.getById(getVmList(), vmId).getHost().getDatacenter();
-            
+
             double ramCap = 0;
             double ramUse = 0;
 
@@ -114,9 +114,9 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
             }
 
             double util = ramUse / ramCap;
-            
+
             dc.getCharacteristics().setCostPerSecond(util);
-            
+
             boolean ready = true;
             List<Integer> group = null;
             for (List<Integer> g : VmGroups.keySet()) {
@@ -144,6 +144,9 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
         } else {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
             Statistician.rejected();
+            if (CloudSim.clock() > 1000) {
+                System.exit(1);
+            }
             createSingleVm(vmId);
         }
         incrementVmsAcks();
@@ -160,7 +163,7 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
                 cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet, vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);
-                
+
                 //cloudletsSubmitted++;
                 getCloudletSubmittedList().add(cloudlet);
             }
