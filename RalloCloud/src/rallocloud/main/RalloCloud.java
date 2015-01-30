@@ -62,7 +62,7 @@ public class RalloCloud {
             if (args.length == 1) {
                 printList = false;
                 strategy = args[0];
-                out = new PrintWriter(new BufferedWriter(new FileWriter("out/" + args[0] + ".txt", true)));
+                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + args[0] + ".txt", true)));
             } else {
                 strategy = "LFF";
             }
