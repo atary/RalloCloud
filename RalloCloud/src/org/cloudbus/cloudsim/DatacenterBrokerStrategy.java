@@ -134,12 +134,15 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             if (ready) {
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") is ready.");
                 Double[][] t = VmGroups.get(group);
-                for (int v : group) {
-                    submitCloudlets(v, group, t);
+                if (allocateLinks(group, t)) {
+                    for (int v : group) {
+                        submitCloudlets(v, group, t);
+                    }
+                } else {
+                    Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") cannot be linked.");
                 }
-            } else {
-            }
 
+            }
         } else {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
             Statistician.rejected();
@@ -187,6 +190,13 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     private void destroyVm(int vmId) {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         Log.printLine(CloudSim.clock() + ": " + getName() + ": Destroying VM #" + vmId + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
+        List<Integer> group = null;
+        for (List<Integer> g : VmGroups.keySet()) {
+            if (g.contains(vmId)) {
+                group = g;
+            }
+        }
+        deallocateLinks(group, VmGroups.get(group));
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
     }
 
@@ -281,6 +291,14 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         /*} else {
          return 0;
          }*/
+    }
+
+    private boolean allocateLinks(List<Integer> g, Double[][] t) {
+        return true;
+    }
+
+    private void deallocateLinks(List<Integer> g, Double[][] t) {
+        return;
     }
 
 }

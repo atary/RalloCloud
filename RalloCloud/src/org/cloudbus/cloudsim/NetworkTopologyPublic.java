@@ -5,7 +5,7 @@
  */
 package org.cloudbus.cloudsim;
 
-import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
+import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 
 /**
  *
@@ -80,7 +80,7 @@ public class NetworkTopologyPublic extends NetworkTopology {
         for (Host h : dc.getHostList()) {
             long bw = h.getBw();
             bw *= getInDegree(cloudSimEntityID);
-            h.setBwProvisioner(new BwProvisionerSimple(bw));
+            h.setBwProvisioner(new BwProvisionerNetworked(bw));
         }
     }
 }

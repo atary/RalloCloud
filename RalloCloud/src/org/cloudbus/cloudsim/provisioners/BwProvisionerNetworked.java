@@ -7,18 +7,18 @@ import org.cloudbus.cloudsim.Vm;
 
 public class BwProvisionerNetworked extends BwProvisioner {
 
-    private Map<String, Long> bwTable;
-    private static ArrayList<BwProvisionerNetworked> list = new ArrayList<>();
+    private final Map<String, Long> bwTable;
+    private final Map<Integer, Long> linkTable;
 
     public BwProvisionerNetworked(long bw) {
         super(bw);
         bwTable = new HashMap<>();
-        list.add(this);
+        linkTable = new HashMap<>();
     }
 
     @Override
     public boolean allocateBwForVm(Vm vm, long bw) {
-        deallocateBwForVm(vm);
+        //deallocateBwForVm(vm);
 
         if (getAvailableBw() >= bw) {
             setAvailableBw(getAvailableBw() - bw);
@@ -27,7 +27,7 @@ public class BwProvisionerNetworked extends BwProvisioner {
             return true;
         }
 
-        vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
+        //vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
         return false;
     }
 
@@ -50,12 +50,12 @@ public class BwProvisionerNetworked extends BwProvisioner {
 
     @Override
     public void deallocateBwForAllVms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet - Atakan."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public boolean isSuitableForVm(Vm vm, long bw) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet - Atakan."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
