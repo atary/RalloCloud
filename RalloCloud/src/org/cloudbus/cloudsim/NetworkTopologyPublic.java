@@ -11,7 +11,7 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
  *
  * @author Atakan
  */
-public class MyNetworkTopology extends NetworkTopology {
+public class NetworkTopologyPublic extends NetworkTopology {
 
     protected static double[][] bwUtilityMatrix = null;
 

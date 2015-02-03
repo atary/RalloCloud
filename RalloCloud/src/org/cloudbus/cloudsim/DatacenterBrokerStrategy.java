@@ -213,7 +213,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         for (int i : in) {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
-            double delay = MyNetworkTopology.getDelay(dcId, dc.getId());
+            double delay = NetworkTopologyPublic.getDelay(dcId, dc.getId());
             Statistician.addDelay(delay);
             if (delay > extraIn) {
                 extraIn = delay;
@@ -222,7 +222,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         for (int i : out) {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
-            double delay = MyNetworkTopology.getDelay(dc.getId(), dcId);
+            double delay = NetworkTopologyPublic.getDelay(dc.getId(), dcId);
             Statistician.addDelay(delay);
             if (delay > extraOut) {
                 extraOut = delay;
@@ -257,8 +257,8 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
         int srcId = getId();
         if (entityId != srcId) {// does not delay self messages
-            if (MyNetworkTopology.getDelay(srcId, entityId) > delay) {
-                delay = MyNetworkTopology.getDelay(srcId, entityId);
+            if (NetworkTopologyPublic.getDelay(srcId, entityId) > delay) {
+                delay = NetworkTopologyPublic.getDelay(srcId, entityId);
             }
         }
 

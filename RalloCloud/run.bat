@@ -1,5 +1,5 @@
 REM RD /S /Q dist\out
-set vmRAM=7
+set vmRAM=9
 MKDIR dist\out
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar AFF %vmRAM%
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar ANF %vmRAM%

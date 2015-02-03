@@ -53,7 +53,7 @@ public class TBFDatacenterBroker extends DatacenterBrokerStrategy {
                 Vm vm = VmList.getById(getVmList(), i);
                 if (vm.getHost() != null) {
                     int dc = vm.getHost().getDatacenter().getId();
-                    double delay = MyNetworkTopology.getDelay(dc, d);
+                    double delay = NetworkTopologyPublic.getDelay(dc, d);
                     if (delay == 0) {
                         delay = 100;
                     }
@@ -100,7 +100,7 @@ public class TBFDatacenterBroker extends DatacenterBrokerStrategy {
                 for (int i = 0; i < g.size(); i++) {
                     int datacenterId = match.pattern2graph().get(i) + 2;
                     Vm vm = VmList.getById(getVmList(), g.get(i));
-                    delay += MyNetworkTopology.getDelay(datacenterId, vm.getUserId());
+                    delay += NetworkTopologyPublic.getDelay(datacenterId, vm.getUserId());
                 }
                 if (delay < minDelay) {
                     minDelay = delay;
@@ -118,7 +118,7 @@ public class TBFDatacenterBroker extends DatacenterBrokerStrategy {
     }
 
     private ArrayList<Matching> matchTopology(Double[][] topology, List<Integer> group) {
-        Double[][] bwMatrix = MyNetworkTopology.getBwMatrix();
+        Double[][] bwMatrix = NetworkTopologyPublic.getBwMatrix();
         Grph g = createGraph(bwMatrix);
         Grph s = createGraph(topology);
 

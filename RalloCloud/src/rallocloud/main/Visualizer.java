@@ -10,6 +10,7 @@ import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import org.cloudbus.cloudsim.NetworkTopologyPublic;
 import toools.set.IntArrayListSet;
 
 /**
@@ -33,7 +34,7 @@ public class Visualizer {
                 if (bwMatrix[i][j] > 0) {
                     int e = g.addUndirectedSimpleEdge(i, j);
                     DecimalFormat dft = new DecimalFormat("###.##");
-                    g.getEdgeLabelProperty().setValue(e, dft.format(MyNetworkTopology.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
+                    g.getEdgeLabelProperty().setValue(e, dft.format(NetworkTopologyPublic.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
                 }
             }
         }
@@ -61,7 +62,7 @@ public class Visualizer {
                 if (bwMatrix[i][j] > 0) {
                     int e = g.addUndirectedSimpleEdge(i, j);
                     DecimalFormat dft = new DecimalFormat("###.##");
-                    g.getEdgeLabelProperty().setValue(e, dft.format(MyNetworkTopology.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
+                    g.getEdgeLabelProperty().setValue(e, dft.format(NetworkTopologyPublic.getDelay(i+2, j+2)) + "ms");// / " + String.valueOf(bwMatrix[i][j]) + "Mbit");
                 }
             }
         }

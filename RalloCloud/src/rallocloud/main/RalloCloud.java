@@ -32,7 +32,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.cloudbus.cloudsim.MyNetworkTopology;
+import org.cloudbus.cloudsim.NetworkTopologyPublic;
 
 /**
  *
@@ -92,20 +92,20 @@ public class RalloCloud {
             labels.add("SWITCH");
             labels.add("NORDUNET");
 
-            MyNetworkTopology.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
-            MyNetworkTopology.setNextIdx(MyNetworkTopology.getBwMatrix().length);
+            NetworkTopologyPublic.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
+            NetworkTopologyPublic.setNextIdx(NetworkTopologyPublic.getBwMatrix().length);
 
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
                 Datacenter dc = createDatacenter(labels.get(i), 1538, 16384, 1000000, 1000);
                 dcList.add(dc);
-                MyNetworkTopology.mapNodes(dc, i);
+                NetworkTopologyPublic.mapNodes(dc, i);
             }
 
             Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
             dcList.add(dc);
-            MyNetworkTopology.mapNodes(dc, 14);
+            NetworkTopologyPublic.mapNodes(dc, 14);
 
             int i = 0;
             for (Datacenter d : dcList) {
@@ -428,7 +428,7 @@ public class RalloCloud {
             }
 
             broker.setDatacenterList(dcList);
-            MyNetworkTopology.addLink(dcId, broker.getId(), 10.0, 0.1);
+            NetworkTopologyPublic.addLink(dcId, broker.getId(), 10.0, 0.1);
 
             System.out.println(broker.getClass().getSimpleName() + " is created");
 

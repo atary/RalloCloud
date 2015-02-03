@@ -38,7 +38,7 @@ public class LFFDatacenterBroker extends DatacenterBrokerStrategy {
         int dcId = -1;
         for (int d : datacenterIdsList) {
             if (!requestedDCs.contains(d)) {
-                double delay = MyNetworkTopology.getDelay(d, vm.getUserId());
+                double delay = NetworkTopologyPublic.getDelay(d, vm.getUserId());
                 if (delay < minDelay) {
                     minDelay = delay;
                     dcId = d;
