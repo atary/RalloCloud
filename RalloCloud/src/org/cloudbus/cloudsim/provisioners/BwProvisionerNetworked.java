@@ -1,25 +1,55 @@
 package org.cloudbus.cloudsim.provisioners;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.cloudbus.cloudsim.Vm;
 
-public class BwProvisionerNetworked extends BwProvisioner{
+public class BwProvisionerNetworked extends BwProvisioner {
+
+    private Map<String, Long> bwTable;
+    private static ArrayList<BwProvisionerNetworked> list = new ArrayList<>();
 
     public BwProvisionerNetworked(long bw) {
         super(bw);
+        bwTable = new HashMap<>();
+        list.add(this);
     }
 
     @Override
     public boolean allocateBwForVm(Vm vm, long bw) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        deallocateBwForVm(vm);
+
+        if (getAvailableBw() >= bw) {
+            setAvailableBw(getAvailableBw() - bw);
+            bwTable.put(vm.getUid(), bw);
+            vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
+            return true;
+        }
+
+        vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
+        return false;
     }
 
     @Override
     public long getAllocatedBwForVm(Vm vm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (bwTable.containsKey(vm.getUid())) {
+            return bwTable.get(vm.getUid());
+        }
+        return 0;
     }
 
     @Override
     public void deallocateBwForVm(Vm vm) {
+        if (bwTable.containsKey(vm.getUid())) {
+            long amountFreed = bwTable.remove(vm.getUid());
+            setAvailableBw(getAvailableBw() + amountFreed);
+            vm.setCurrentAllocatedBw(0);
+        }
+    }
+
+    @Override
+    public void deallocateBwForAllVms() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -28,11 +58,4 @@ public class BwProvisionerNetworked extends BwProvisioner{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void deallocateBwForAllVms() {
-        super.deallocateBwForAllVms(); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
-    
 }

@@ -33,6 +33,7 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.NetworkTopologyPublic;
+import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 
 /**
  *
@@ -265,7 +266,7 @@ public class RalloCloud {
                 new Host(
                         hostId,
                         new RamProvisionerSimple(ram),
-                        new BwProvisionerSimple(bw),
+                        new BwProvisionerNetworked(bw),
                         storage,
                         peList,
                         new VmSchedulerTimeShared(peList)
