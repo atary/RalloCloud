@@ -196,41 +196,41 @@ public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBro
 
         Datacenter dc = VmList.getById(getVmList(), vmId).getHost().getDatacenter();
 
-        ArrayList<Integer> from = new ArrayList<>();
-        ArrayList<Integer> to = new ArrayList<>();
+        ArrayList<Integer> in = new ArrayList<>();
+        ArrayList<Integer> out = new ArrayList<>();
 
         for (int i = 0; i < group.size(); i++) {
             if (top[i][topIndex] > 0) {
-                from.add(group.get(i));
+                in.add(group.get(i));
             }
             if (top[topIndex][i] > 0) {
-                to.add(group.get(i));
+                out.add(group.get(i));
             }
         }
 
-        double extraFrom = 0;
-        double extraTo = 0;
+        double extraIn = 0;
+        double extraOut = 0;
 
-        for (int i : from) {
+        for (int i : in) {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = MyNetworkTopology.getDelay(dcId, dc.getId());
             Statistician.addDelay(delay);
-            if (delay > extraFrom) {
-                extraFrom = delay;
+            if (delay > extraIn) {
+                extraIn = delay;
             }
         }
-        for (int i : to) {
+        for (int i : out) {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = MyNetworkTopology.getDelay(dc.getId(), dcId);
             Statistician.addDelay(delay);
-            if (delay > extraTo) {
-                extraTo = delay;
+            if (delay > extraOut) {
+                extraOut = delay;
             }
         }
 
-        return (long) (extraFrom * c.getCloudletFileSize() + extraTo * c.getCloudletOutputSize());
+        return (long) (extraIn * c.getCloudletFileSize() + extraOut * c.getCloudletOutputSize());
     }
 
     @Override

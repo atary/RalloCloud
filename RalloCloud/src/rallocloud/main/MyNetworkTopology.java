@@ -34,4 +34,28 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
     public static void setNextIdx(int nextIdx) {
         NetworkTopology.nextIdx = nextIdx;
     }
+
+    public static int getInDegree(int id) {
+        int mid = map.get(id);
+        int inDegree = 0;
+        int l = bwMatrix.length;
+        for (int i = 0; i < l; i++) {
+            if (bwMatrix[i][mid] > 0) {
+                inDegree++;
+            }
+        }
+        return inDegree;
+    }
+    
+    public static int getOutDegree(int id) {
+        int mid = map.get(id);
+        int outDegree = 0;
+        int l = bwMatrix.length;
+        for (int i = 0; i < l; i++) {
+            if (bwMatrix[mid][i] > 0) {
+                outDegree++;
+            }
+        }
+        return outDegree;
+    }
 }
