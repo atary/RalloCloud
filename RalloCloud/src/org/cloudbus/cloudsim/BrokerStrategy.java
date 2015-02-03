@@ -22,7 +22,7 @@ import rallocloud.main.Statistician;
  *
  * @author Atakan
  */
-public abstract class BrokerStrategy extends org.cloudbus.cloudsim.DatacenterBroker {
+public abstract class BrokerStrategy extends DatacenterBroker {
 
     //public static int i;
     protected ArrayList<Datacenter> datacenterList;

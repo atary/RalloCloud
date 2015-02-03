@@ -32,6 +32,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.cloudbus.cloudsim.MyNetworkTopology;
 
 /**
  *
@@ -55,7 +56,7 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 6;
+            vmRAM = 1;
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -99,12 +100,12 @@ public class RalloCloud {
             for (int i = 0; i < 14; i++) {
                 Datacenter dc = createDatacenter(labels.get(i), 1538, 16384, 1000000, 1000);
                 dcList.add(dc);
-                MyNetworkTopology.mapNode(dc.getId(), i);
+                MyNetworkTopology.mapNodes(dc, i);
             }
 
             Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
             dcList.add(dc);
-            MyNetworkTopology.mapNode(dc.getId(), 14);
+            MyNetworkTopology.mapNodes(dc, 14);
 
             int i = 0;
             for (Datacenter d : dcList) {

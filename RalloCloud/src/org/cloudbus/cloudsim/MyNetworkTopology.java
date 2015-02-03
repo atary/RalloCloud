@@ -5,11 +5,13 @@
  */
 package org.cloudbus.cloudsim;
 
+import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
+
 /**
  *
  * @author Atakan
  */
-public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
+public class MyNetworkTopology extends NetworkTopology {
 
     protected static double[][] bwUtilityMatrix = null;
 
@@ -25,7 +27,6 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
                 temp[i][j] = bwMatrix[i][j];
             }
         }
-
         return temp;
     }
 
@@ -44,7 +45,7 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
         }
         return inDegree;
     }
-    
+
     public static int getOutDegree(int id) {
         int mid = map.get(id);
         int outDegree = 0;
@@ -55,5 +56,31 @@ public class MyNetworkTopology extends org.cloudbus.cloudsim.NetworkTopology {
             }
         }
         return outDegree;
+    }
+
+    public static void mapNodes(Datacenter dc, int briteID) {
+        int cloudSimEntityID = dc.getId();
+        try {
+            // this CloudSim entity was already mapped?
+            if (!map.containsKey(cloudSimEntityID)) {
+                if (!map.containsValue(briteID)) { // this BRITE node was already mapped?
+                    map.put(cloudSimEntityID, briteID);
+                } else {
+                    Log.printLine("Error in network mapping. BRITE node " + briteID + " already in use.");
+                }
+            } else {
+                Log.printLine("Error in network mapping. CloudSim entity " + cloudSimEntityID
+                        + " already mapped.");
+            }
+        } catch (Exception e) {
+            Log.printLine("Error in network mapping. CloudSim node " + cloudSimEntityID
+                    + " not mapped to BRITE node " + briteID + ".");
+        }
+
+        for (Host h : dc.getHostList()) {
+            long bw = h.getBw();
+            bw *= getInDegree(cloudSimEntityID);
+            h.setBwProvisioner(new BwProvisionerSimple(bw));
+        }
     }
 }
