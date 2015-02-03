@@ -15,7 +15,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
-import rallocloud.main.MyNetworkTopology;
 import rallocloud.main.Statistician;
 
 /**

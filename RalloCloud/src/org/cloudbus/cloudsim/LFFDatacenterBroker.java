@@ -12,7 +12,6 @@ import java.util.Map;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.lists.VmList;
-import rallocloud.main.MyNetworkTopology;
 
 /**
  * Latency based first fit

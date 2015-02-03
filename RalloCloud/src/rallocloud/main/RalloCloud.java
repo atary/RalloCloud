@@ -58,7 +58,7 @@ public class RalloCloud {
             vmRAM = 6;
             if (args.length > 0) {
                 printList = false;
-                if(args.length>1){
+                if (args.length > 1) {
                     vmRAM = Integer.parseInt(args[1]);
                 }
                 strategy = args[0];
