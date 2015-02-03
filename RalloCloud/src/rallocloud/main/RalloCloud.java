@@ -42,7 +42,7 @@ public class RalloCloud {
 
     private static int vmid = 0;
     private static int cloudletid = 0;
-    private static final HashSet<BrokerStrategy> brokerSet = new HashSet<>();
+    private static final HashSet<DatacenterBrokerStrategy> brokerSet = new HashSet<>();
     private static PrintWriter out;
     private static String strategy;
     private static int vmRAM;
@@ -115,7 +115,7 @@ public class RalloCloud {
                 createBroker(dcList, name, d.getId());
             }
 
-            for (BrokerStrategy bs : brokerSet) {
+            for (DatacenterBrokerStrategy bs : brokerSet) {
                 createVmGroup(bs, 3, 40, topologyType.LINEAR);
                 createVmGroup(bs, 2, 40, topologyType.COMPLETE);
             }
@@ -127,7 +127,7 @@ public class RalloCloud {
             List<Cloudlet> clList = new ArrayList<>();
             ArrayList<List<Cloudlet>> clSepList = new ArrayList<>();
             HashMap<Integer, Integer> VmsToDatacentersMap = new HashMap<>();
-            for (BrokerStrategy bs : brokerSet) {
+            for (DatacenterBrokerStrategy bs : brokerSet) {
                 if (bs.getCloudletSubmittedList().isEmpty()) {
                     continue;
                 }
@@ -160,7 +160,7 @@ public class RalloCloud {
         }
     }
 
-    private static Double[][] createVmGroup(BrokerStrategy broker, int count, double time, topologyType type) {
+    private static Double[][] createVmGroup(DatacenterBrokerStrategy broker, int count, double time, topologyType type) {
         int brokerId = broker.getId();
 
         PoissonDistribution pd = new PoissonDistribution(count); //for VM count
@@ -327,9 +327,9 @@ public class RalloCloud {
         for (int i = 0; i < size; i++) {
             cloudlet = clList.get(i);
 
-            BrokerStrategy broker = null;
+            DatacenterBrokerStrategy broker = null;
 
-            for (BrokerStrategy b : brokerSet) {
+            for (DatacenterBrokerStrategy b : brokerSet) {
                 if (b.getId() == cloudlet.getUserId()) {
                     broker = b;
                     break;
@@ -398,10 +398,10 @@ public class RalloCloud {
         }
     }
 
-    private static BrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId) {
+    private static DatacenterBrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId) {
 
         try {
-            BrokerStrategy broker = null;
+            DatacenterBrokerStrategy broker = null;
 
             switch (strategy) {
                 case "AFF":

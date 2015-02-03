@@ -22,7 +22,7 @@ import rallocloud.main.Statistician;
  *
  * @author Atakan
  */
-public abstract class BrokerStrategy extends DatacenterBroker {
+public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     //public static int i;
     protected ArrayList<Datacenter> datacenterList;
@@ -53,7 +53,7 @@ public abstract class BrokerStrategy extends DatacenterBroker {
         return GroupTimes;
     }
 
-    public BrokerStrategy(String name) throws Exception {
+    public DatacenterBrokerStrategy(String name) throws Exception {
         super(name);
         Log.disable();
         VmGroups = new HashMap<>();

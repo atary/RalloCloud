@@ -16,7 +16,7 @@ import org.cloudbus.cloudsim.lists.VmList;
  *
  * @author Atakan
  */
-public class ANFDatacenterBroker extends BrokerStrategy {
+public class ANFDatacenterBroker extends DatacenterBrokerStrategy {
 
     private int i;
 

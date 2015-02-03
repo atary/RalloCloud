@@ -16,7 +16,7 @@ import org.cloudbus.cloudsim.lists.VmList;
  *
  * @author Atakan
  */
-public class RANDatacenterBroker extends BrokerStrategy {
+public class RANDatacenterBroker extends DatacenterBrokerStrategy {
 
     public RANDatacenterBroker(String name) throws Exception {
         super(name);

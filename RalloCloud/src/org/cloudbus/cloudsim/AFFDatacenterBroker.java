@@ -18,7 +18,7 @@ import org.cloudbus.cloudsim.lists.VmList;
  *
  * @author Atakan
  */
-public class AFFDatacenterBroker extends BrokerStrategy {
+public class AFFDatacenterBroker extends DatacenterBrokerStrategy {
 
     protected Map<Integer, List<Integer>> datacenterRequestedIdsMap;
 

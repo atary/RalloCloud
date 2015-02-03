@@ -18,7 +18,7 @@ import org.cloudbus.cloudsim.lists.VmList;
  *
  * @author Atakan
  */
-public class LBGDatacenterBroker extends BrokerStrategy {
+public class LBGDatacenterBroker extends DatacenterBrokerStrategy {
 
     protected Map<Integer, List<Integer>> datacenterRequestedIdsMap;
 
