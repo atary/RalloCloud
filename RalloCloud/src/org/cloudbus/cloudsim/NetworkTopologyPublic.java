@@ -5,6 +5,9 @@
  */
 package org.cloudbus.cloudsim;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 
 /**
@@ -14,7 +17,12 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 public class NetworkTopologyPublic extends NetworkTopology {
 
     protected static double[][] bwUtilityMatrix = null;
+    private static HashSet<DatacenterBrokerStrategy> brokerSet = new HashSet<>();
 
+    public static void setBrokerSet(HashSet<DatacenterBrokerStrategy> brokerSet) {
+        NetworkTopologyPublic.brokerSet = brokerSet;
+    }
+    
     public static double[][] getBwUtilityMatrix() {
         return bwUtilityMatrix;
     }
@@ -82,5 +90,9 @@ public class NetworkTopologyPublic extends NetworkTopology {
             bw *= getInDegree(cloudSimEntityID);
             h.setBwProvisioner(new BwProvisionerNetworked(bw));
         }
+    }
+
+    public static ArrayList<Datacenter> getShortestPathDCs(Vm v){
+        return null;
     }
 }

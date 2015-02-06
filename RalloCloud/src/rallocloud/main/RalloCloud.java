@@ -120,6 +120,8 @@ public class RalloCloud {
                 createVmGroup(bs, 3, 40, topologyType.LINEAR);
                 createVmGroup(bs, 2, 40, topologyType.COMPLETE);
             }
+            
+            NetworkTopologyPublic.setBrokerSet(brokerSet);
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
             //START
