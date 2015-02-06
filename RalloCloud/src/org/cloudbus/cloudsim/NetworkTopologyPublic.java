@@ -7,6 +7,7 @@ package org.cloudbus.cloudsim;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 
@@ -22,7 +23,7 @@ public class NetworkTopologyPublic extends NetworkTopology {
     public static void setBrokerSet(HashSet<DatacenterBrokerStrategy> brokerSet) {
         NetworkTopologyPublic.brokerSet = brokerSet;
     }
-    
+
     public static double[][] getBwUtilityMatrix() {
         return bwUtilityMatrix;
     }
@@ -88,11 +89,40 @@ public class NetworkTopologyPublic extends NetworkTopology {
         for (Host h : dc.getHostList()) {
             long bw = h.getBw();
             bw *= getInDegree(cloudSimEntityID);
-            h.setBwProvisioner(new BwProvisionerNetworked(bw));
+            h.setBwProvisioner(new BwProvisionerNetworked(bw,dc.getId()));
         }
     }
 
-    public static ArrayList<Datacenter> getShortestPathDCs(Vm v){
+    public static ArrayList<Datacenter> getShortestPathDCs(Vm vm) {
+        DatacenterBrokerStrategy broker = null;
+        for (DatacenterBrokerStrategy b : brokerSet) {
+            if (b.getId() == vm.getUserId()) {
+                broker = b;
+            }
+        }
+        ArrayList<Integer> group = null;
+        for (List<Integer> g : broker.getVmGroups().keySet()) {
+            if (g.contains(vm.getId())) {
+                group = (ArrayList<Integer>) g;
+            }
+        }
+        Double[][] topology = broker.getVmGroups().get(group);
+        int index = group.indexOf(vm.getId());
+
+        ArrayList<Integer> connectedVmIds = new ArrayList<>();
+        for (int i = 0; i < topology[index].length; i++) {
+            if (topology[index][i] > 0) {
+                connectedVmIds.add(group.get(i));
+            }
+        }
+
+        ArrayList<Datacenter> endDCs = new ArrayList<>();
+        for (Vm v : broker.getVmList()) {
+            if (connectedVmIds.contains(v.getId()) && v.getHost() != null) {
+                endDCs.add(v.getHost().getDatacenter());
+            }
+        }
+        
         return null;
     }
 }

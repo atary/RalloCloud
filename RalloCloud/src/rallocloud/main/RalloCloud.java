@@ -268,7 +268,7 @@ public class RalloCloud {
                 new Host(
                         hostId,
                         new RamProvisionerSimple(ram),
-                        new BwProvisionerNetworked(bw),
+                        new BwProvisionerNetworked(bw,-1),
                         storage,
                         peList,
                         new VmSchedulerTimeShared(peList)

@@ -9,11 +9,13 @@ public class BwProvisionerNetworked extends BwProvisioner {
 
     private final Map<String, Long> bwTable;
     private final Map<Integer, Long> linkTable;
+    private final int DCid;
 
-    public BwProvisionerNetworked(long bw) {
+    public BwProvisionerNetworked(long bw, int DCid) {
         super(bw);
         bwTable = new HashMap<>();
         linkTable = new HashMap<>();
+        this.DCid = DCid;
     }
 
     @Override
