@@ -47,6 +47,7 @@ public class RalloCloud {
     private static PrintWriter out;
     private static String strategy;
     private static int vmRAM;
+    private static int vmBW;
 
     private enum topologyType {
 
@@ -58,13 +59,17 @@ public class RalloCloud {
         try {
             boolean printList = true; //Human readable?
             vmRAM = 1;
+            vmBW = 1;
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
                     vmRAM = Integer.parseInt(args[1]);
                 }
+                if (args.length > 2){
+                    vmBW = Integer.parseInt(args[2]);
+                }
                 strategy = args[0];
-                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + ".txt", true)));
+                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + ".txt", true)));
                 out.println(strategy);
             } else {
                 strategy = "ANF";
@@ -181,7 +186,7 @@ public class RalloCloud {
             int mips = 50;
             long size = 10000; //image size (MB)
             int ram = 1024 * vmRAM; //vm memory (MB)
-            long bw = 10;
+            long bw = 50 * vmBW;
             int pesNumber = 1; //number of cpus
             String vmm = "Xen"; //VMM name
 
