@@ -149,7 +149,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             Statistician.rejected();
             if (CloudSim.clock() > 1000) {
                 if (out != null) {
-                    out.println(strategy);
+                    //out.println(strategy);
                     for (int i = 0; i < 13; i++) {
                         out.println("");
                     }
