@@ -2,6 +2,7 @@ package org.cloudbus.cloudsim.provisioners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.NetworkTopologyPublic;
@@ -12,12 +13,14 @@ public class BwProvisionerNetworked extends BwProvisioner {
     private final Map<String, Long> bwTable;
     private final Map<String, Long> bwLinkTable;
     private final int DCid;
+    private final static HashSet<BwProvisionerNetworked> provisioners = new HashSet<>();
 
     public BwProvisionerNetworked(long bw, int DCid) {
         super(bw);
         bwTable = new HashMap<>();
         bwLinkTable = new HashMap<>();
         this.DCid = DCid;
+        provisioners.add(this);
     }
 
     public boolean allocateBwForVmLink(Vm vm, long bw) {
@@ -27,6 +30,13 @@ public class BwProvisionerNetworked extends BwProvisioner {
             return true;
         }
         return false;
+    }
+
+    public void deallocateBwForVmLink(Vm vm) {
+        if (bwLinkTable.containsKey(vm.getUid())) {
+            long amountFreed = bwLinkTable.remove(vm.getUid());
+            setAvailableBw(getAvailableBw() + amountFreed);
+        }
     }
 
     @Override
@@ -66,6 +76,9 @@ public class BwProvisionerNetworked extends BwProvisioner {
             long amountFreed = bwTable.remove(vm.getUid());
             setAvailableBw(getAvailableBw() + amountFreed);
             vm.setCurrentAllocatedBw(0);
+            for (BwProvisionerNetworked bwp : provisioners) {
+                bwp.deallocateBwForVmLink(vm);
+            }
         }
     }
 
