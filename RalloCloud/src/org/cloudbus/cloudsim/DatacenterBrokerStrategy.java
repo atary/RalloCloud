@@ -15,6 +15,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsim.lists.VmList;
+import static rallocloud.main.RalloCloud.*;
 import rallocloud.main.Statistician;
 
 /**
@@ -147,6 +148,13 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
             Statistician.rejected();
             if (CloudSim.clock() > 1000) {
+                if (out != null) {
+                    out.println(strategy);
+                    for (int i = 0; i < 13; i++) {
+                        out.println("");
+                    }
+                    out.close();
+                }
                 System.exit(1);
             }
             createSingleVm(vmId);

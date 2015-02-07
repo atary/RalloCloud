@@ -44,8 +44,8 @@ public class RalloCloud {
     private static int vmid = 0;
     private static int cloudletid = 0;
     private static final HashSet<DatacenterBrokerStrategy> brokerSet = new HashSet<>();
-    private static PrintWriter out;
-    private static String strategy;
+    public static PrintWriter out = null;
+    public static String strategy;
     private static int vmRAM;
     private static int vmBW;
 
