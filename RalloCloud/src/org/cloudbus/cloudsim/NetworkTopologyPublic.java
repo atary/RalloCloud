@@ -8,7 +8,9 @@ package org.cloudbus.cloudsim;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import grph.Grph;
+import grph.in_memory.InMemoryGrph;
+import grph.path.Path;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
 
 /**
@@ -17,15 +19,11 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerNetworked;
  */
 public class NetworkTopologyPublic extends NetworkTopology {
 
-    protected static double[][] bwUtilityMatrix = null;
     private static HashSet<DatacenterBrokerStrategy> brokerSet = new HashSet<>();
+    private static Grph grph = new InMemoryGrph();
 
     public static void setBrokerSet(HashSet<DatacenterBrokerStrategy> brokerSet) {
         NetworkTopologyPublic.brokerSet = brokerSet;
-    }
-
-    public static double[][] getBwUtilityMatrix() {
-        return bwUtilityMatrix;
     }
 
     public static Double[][] getBwMatrix() {
@@ -89,11 +87,11 @@ public class NetworkTopologyPublic extends NetworkTopology {
         for (Host h : dc.getHostList()) {
             long bw = h.getBw();
             bw *= getInDegree(cloudSimEntityID);
-            h.setBwProvisioner(new BwProvisionerNetworked(bw,dc.getId()));
+            h.setBwProvisioner(new BwProvisionerNetworked(bw, dc.getId()));
         }
     }
 
-    public static ArrayList<Datacenter> getShortestPathDCs(Vm vm) {
+    public static ArrayList<Datacenter> getShortestPathDCs(Vm vm, int dcId) {
         DatacenterBrokerStrategy broker = null;
         for (DatacenterBrokerStrategy b : brokerSet) {
             if (b.getId() == vm.getUserId()) {
@@ -116,13 +114,47 @@ public class NetworkTopologyPublic extends NetworkTopology {
             }
         }
 
-        ArrayList<Datacenter> endDCs = new ArrayList<>();
+        ArrayList<Integer> endDCIds = new ArrayList<>();
         for (Vm v : broker.getVmList()) {
             if (connectedVmIds.contains(v.getId()) && v.getHost() != null) {
-                endDCs.add(v.getHost().getDatacenter());
+                endDCIds.add(v.getHost().getDatacenter().getId() - 2); //grph ids are -2
+            }
+        }
+
+        fillGrph();
+
+        ArrayList<Integer> DCIds = new ArrayList<>();
+        for (int i : endDCIds) {
+            Path p = grph.getShortestPath(dcId - 2, i);
+            for (int j : p.getVertexSet().toIntArray()) {
+                if (j != dcId - 2) {
+                    DCIds.add(j + 2);
+                }
+            }
+        }
+
+        ArrayList<Datacenter> DCs = new ArrayList<>();
+        for (Datacenter d : broker.getDatacenterList()) {
+            if(DCIds.contains(d.getId())){
+                DCs.add(d);
             }
         }
         
-        return null;
+        return DCs;
+    }
+
+    private static void fillGrph() {
+        if (grph.getVertices().isEmpty()) {
+            for (int i = 0; i < bwMatrix.length; i++) {
+                grph.addVertex(i);
+            }
+            for (int i = 0; i < bwMatrix.length; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (bwMatrix[i][j] > 0) {
+                        grph.addUndirectedSimpleEdge(i, j);
+                    }
+                }
+            }
+        }
     }
 }

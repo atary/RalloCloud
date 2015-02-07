@@ -3,6 +3,7 @@ package org.cloudbus.cloudsim.provisioners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.cloudbus.cloudsim.NetworkTopologyPublic;
 import org.cloudbus.cloudsim.Vm;
 
 public class BwProvisionerNetworked extends BwProvisioner {
@@ -21,7 +22,7 @@ public class BwProvisionerNetworked extends BwProvisioner {
     @Override
     public boolean allocateBwForVm(Vm vm, long bw) {
         //deallocateBwForVm(vm);
-
+        NetworkTopologyPublic.getShortestPathDCs(vm, DCid);
         if (getAvailableBw() >= bw) {
             setAvailableBw(getAvailableBw() - bw);
             bwTable.put(vm.getUid(), bw);
