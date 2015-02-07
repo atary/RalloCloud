@@ -3,27 +3,45 @@ package org.cloudbus.cloudsim.provisioners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.NetworkTopologyPublic;
 import org.cloudbus.cloudsim.Vm;
 
 public class BwProvisionerNetworked extends BwProvisioner {
 
     private final Map<String, Long> bwTable;
-    private final Map<Integer, Long> linkTable;
+    private final Map<String, Long> bwLinkTable;
     private final int DCid;
 
     public BwProvisionerNetworked(long bw, int DCid) {
         super(bw);
         bwTable = new HashMap<>();
-        linkTable = new HashMap<>();
+        bwLinkTable = new HashMap<>();
         this.DCid = DCid;
+    }
+
+    public boolean allocateBwForVmLink(Vm vm, long bw) {
+        if (getAvailableBw() >= bw) {
+            setAvailableBw(getAvailableBw() - bw);
+            bwLinkTable.put(vm.getUid(), bw);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean allocateBwForVm(Vm vm, long bw) {
         //deallocateBwForVm(vm);
-        NetworkTopologyPublic.getShortestPathDCs(vm, DCid);
         if (getAvailableBw() >= bw) {
+            ArrayList<Datacenter> DCs = NetworkTopologyPublic.getShortestPathDCs(vm, DCid);
+            for (Datacenter d : DCs) {
+                if (d.getHostList().get(0).getBwProvisioner().getAvailableBw() < bw) {
+                    return false;
+                }
+            }
+            for (Datacenter d : DCs) {
+                ((BwProvisionerNetworked) d.getHostList().get(0).getBwProvisioner()).allocateBwForVmLink(vm, bw);
+            }
             setAvailableBw(getAvailableBw() - bw);
             bwTable.put(vm.getUid(), bw);
             vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
