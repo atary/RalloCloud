@@ -50,7 +50,11 @@ public class BwProvisionerNetworked extends BwProvisioner {
                 }
             }
             for (Datacenter d : DCs) {
-                ((BwProvisionerNetworked) d.getHostList().get(0).getBwProvisioner()).allocateBwForVmLink(vm, bw);
+                if (!((BwProvisionerNetworked) d.getHostList().get(0).getBwProvisioner()).allocateBwForVmLink(vm, bw)) {
+                    for (BwProvisionerNetworked bwp : provisioners) {
+                        bwp.deallocateBwForVmLink(vm);
+                    }
+                }
             }
             setAvailableBw(getAvailableBw() - bw);
             bwTable.put(vm.getUid(), bw);
