@@ -71,7 +71,7 @@ public class RalloCloud {
                 out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + ".txt", true)));
                 out.println(strategy);
             } else {
-                strategy = "ANF";
+                strategy = "TBF";
             }
 
             int num_user = 15;
@@ -103,7 +103,7 @@ public class RalloCloud {
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 1538, 16384, 1000000, 1000);
+                Datacenter dc = createDatacenter(labels.get(i), 1538*4, 65536, 4000000, 4000);
                 dcList.add(dc);
                 NetworkTopologyPublic.mapNodes(dc, i);
             }
@@ -121,8 +121,10 @@ public class RalloCloud {
             }
 
             for (DatacenterBrokerStrategy bs : brokerSet) {
-                createVmGroup(bs, 3, 40, topologyType.LINEAR);
-                createVmGroup(bs, 2, 40, topologyType.COMPLETE);
+                for (i = 0; i < bs.getPopulation() / 5; i++) {
+                    createVmGroup(bs, 3, 50, topologyType.LINEAR);
+                    createVmGroup(bs, 2, 50, topologyType.COMPLETE);
+                }
             }
 
             NetworkTopologyPublic.setBrokerSet(brokerSet);
