@@ -33,6 +33,16 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     protected Map<List<Integer>, Double[][]> VmGroups;
 
     protected Map<List<Integer>, Double> GroupTimes;
+    
+    private int population;
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(int population) {
+        this.population = population;
+    }
 
     public ArrayList<Vm> getAllVmList() {
         return AllVmList;

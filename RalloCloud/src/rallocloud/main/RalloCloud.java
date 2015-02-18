@@ -29,7 +29,6 @@ import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.NetworkTopologyPublic;
@@ -65,7 +64,7 @@ public class RalloCloud {
                 if (args.length > 1) {
                     vmRAM = Integer.parseInt(args[1]);
                 }
-                if (args.length > 2){
+                if (args.length > 2) {
                     vmBW = Integer.parseInt(args[2]);
                 }
                 strategy = args[0];
@@ -125,7 +124,7 @@ public class RalloCloud {
                 createVmGroup(bs, 3, 40, topologyType.LINEAR);
                 createVmGroup(bs, 2, 40, topologyType.COMPLETE);
             }
-            
+
             NetworkTopologyPublic.setBrokerSet(brokerSet);
 
             //Visualizer.emptyTopology(MyNetworkTopology.getBwMatrix(), labels);
@@ -176,7 +175,6 @@ public class RalloCloud {
         UniformRealDistribution urd = new UniformRealDistribution(0, time); //For request time
         time = urd.sample();
 
-        //System.out.println(broker.getId() + "\t" + time + "\t" + count);
         if (count == 0) {
             return null;
         }
@@ -273,7 +271,7 @@ public class RalloCloud {
                 new Host(
                         hostId,
                         new RamProvisionerSimple(ram),
-                        new BwProvisionerNetworked(bw,-1),
+                        new BwProvisionerNetworked(bw, -1),
                         storage,
                         peList,
                         new VmSchedulerTimeShared(peList)
@@ -435,10 +433,12 @@ public class RalloCloud {
                     break;
             }
 
+            int[] pops = {-1, -1, 61, 81, 11, 30, 10, 6, 5, 23, 5, 10, 10, 9, 23, 8, 6};
+
             broker.setDatacenterList(dcList);
             NetworkTopologyPublic.addLink(dcId, broker.getId(), 10.0, 0.1);
 
-            System.out.println(broker.getClass().getSimpleName() + " is created");
+            broker.setPopulation(pops[dcId]);
 
             brokerSet.add(broker);
 
