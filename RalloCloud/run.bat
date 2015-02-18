@@ -1,4 +1,3 @@
-REM RD /S /Q dist\out
 set vmRAM=%1
 set vmBW=%2
 MKDIR dist\out
