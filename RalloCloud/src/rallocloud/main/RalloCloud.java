@@ -362,7 +362,7 @@ public class RalloCloud {
             }
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
-            JCT += cloudlet.getFinishTime();
+            JCT += (cloudlet.getFinishTime()-time);
             CST += cloudlet.getCostPerSec() * cloudlet.getActualCPUTime();
             AVC += cloudlet.getCostPerSec();
             if (cloudlet.getExecStartTime() > MUL) {
