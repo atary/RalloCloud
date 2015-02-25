@@ -59,6 +59,7 @@ public class RalloCloud {
             boolean printList = true; //Human readable?
             vmRAM = 1;
             vmBW = 1;
+            strategy = "LNF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -70,8 +71,6 @@ public class RalloCloud {
                 strategy = args[0];
                 out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + ".txt", true)));
                 out.println(strategy);
-            } else {
-                strategy = "TBF";
             }
 
             int num_user = 15;
