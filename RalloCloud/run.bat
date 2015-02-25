@@ -5,5 +5,6 @@ FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar AFF %vmRA
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar ANF %vmRAM% %vmBW%
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar LBG %vmRAM% %vmBW%
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar LFF %vmRAM% %vmBW%
+FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar LNF %vmRAM% %vmBW%
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar RAN %vmRAM% %vmBW%
 FOR /L %%G IN (1,1,30) DO START /B /WAIT java -jar dist/RalloCloud.jar TBF %vmRAM% %vmBW%

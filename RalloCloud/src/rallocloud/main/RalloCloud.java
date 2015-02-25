@@ -424,6 +424,9 @@ public class RalloCloud {
                 case "LFF":
                     broker = new LFFDatacenterBroker(name);
                     break;
+                case "LNF":
+                    broker = new LNFDatacenterBroker(name);
+                    break;
                 case "RAN":
                     broker = new RANDatacenterBroker(name);
                     break;
