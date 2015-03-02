@@ -78,11 +78,6 @@ public class TBFDatacenterBroker extends DatacenterBrokerStrategy {
             datacenterRequestedIdsMap.remove(vmId);
             createSingleVm(vmId);
         }
-        /*ArrayList<Integer> g = new ArrayList<>();
-         g.add(vmId);
-         Double[][] t = new Double[1][1];
-         t[0][0] = 0.0;
-         createGroupVm(g, t);*/
     }
 
     @Override

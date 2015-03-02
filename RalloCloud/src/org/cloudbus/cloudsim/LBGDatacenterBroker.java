@@ -55,7 +55,6 @@ public class LBGDatacenterBroker extends DatacenterBrokerStrategy {
             }
 
             for (Vm v : AllVmList) {
-                //if (vmsToDatacentersMap.get(v.getId()) == di) {
                 if (v.getHost() != null && v.getHost().getDatacenter().getId() == di) {
                     ramUse += v.getRam();
                 }
@@ -63,7 +62,6 @@ public class LBGDatacenterBroker extends DatacenterBrokerStrategy {
 
             double util = ramUse / ramCap;
 
-            //System.out.println(dc.getName() + " util: " + util + " (" + ramUse + "/" + ramCap + ")");
             if (util < minUtil) {
                 minUtil = util;
                 dcId = di;
