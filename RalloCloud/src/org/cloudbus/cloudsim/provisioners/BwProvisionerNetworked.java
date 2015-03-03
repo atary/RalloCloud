@@ -45,7 +45,8 @@ public class BwProvisionerNetworked extends BwProvisioner {
         if (getAvailableBw() >= bw) {
             ArrayList<Datacenter> DCs = NetworkTopologyPublic.getShortestPathDCs(vm, DCid);
             for (Datacenter d : DCs) {
-                if (d.getHostList().get(0).getBwProvisioner().getAvailableBw() < bw) {
+                long avail = d.getHostList().get(0).getBwProvisioner().getAvailableBw();
+                if (avail < bw) {
                     return false;
                 }
             }
@@ -54,6 +55,7 @@ public class BwProvisionerNetworked extends BwProvisioner {
                     for (BwProvisionerNetworked bwp : provisioners) {
                         bwp.deallocateBwForVmLink(vm);
                     }
+                    return false;
                 }
             }
             setAvailableBw(getAvailableBw() - bw);
@@ -61,8 +63,6 @@ public class BwProvisionerNetworked extends BwProvisioner {
             vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
             return true;
         }
-
-        //vm.setCurrentAllocatedBw(getAllocatedBwForVm(vm));
         return false;
     }
 

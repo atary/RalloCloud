@@ -116,7 +116,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
                 ramCap = dc.getHostList().get(i).getRam();
             }
 
-            for (Vm v : vmList) { //AllVmList for general utility based pricing
+            for (Vm v : vmList) { //vmList: individual utility based pricing - allVmList: general utility based pricing
                 if (v.getHost() != null && v.getHost().getDatacenter().getId() == datacenterId) {
                     ramUse += v.getRam();
                 }
