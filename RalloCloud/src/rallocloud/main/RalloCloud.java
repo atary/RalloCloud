@@ -96,13 +96,16 @@ public class RalloCloud {
             labels.add("SWITCH");
             labels.add("NORDUNET");
 
+            int[] numVnodes = {2, 2, 2, 3, 1, 1, 2, 2, 1, 2, 1, 3, 1, 1};
+
             NetworkTopologyPublic.buildNetworkTopology("C:\\Users\\Atakan\\Documents\\NetBeansProjects\\RalloCloud\\RalloCloud\\data\\federica.brite");
             NetworkTopologyPublic.setNextIdx(NetworkTopologyPublic.getBwMatrix().length);
 
             ArrayList<Datacenter> dcList = new ArrayList<>();
 
             for (int i = 0; i < 14; i++) {
-                Datacenter dc = createDatacenter(labels.get(i), 1538*4, 65536, 4000000, 4000);
+                int n = numVnodes[i];
+                Datacenter dc = createDatacenter(labels.get(i), 1538 * 4 * n, 65536 * n, 4000000 * n, 4000);
                 dcList.add(dc);
                 NetworkTopologyPublic.mapNodes(dc, i);
             }
@@ -361,7 +364,7 @@ public class RalloCloud {
             }
             AUL += cloudlet.getExecStartTime();
             JRT += cloudlet.getActualCPUTime();
-            JCT += (cloudlet.getFinishTime()-time);
+            JCT += (cloudlet.getFinishTime() - time);
             CST += cloudlet.getCostPerSec() * cloudlet.getActualCPUTime();
             AVC += cloudlet.getCostPerSec();
             if (cloudlet.getExecStartTime() > MUL) {
