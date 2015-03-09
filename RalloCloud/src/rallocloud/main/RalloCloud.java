@@ -58,7 +58,7 @@ public class RalloCloud {
         try {
             boolean printList = true; //Human readable?
             vmRAM = 1;
-            vmBW = 1;
+            vmBW = 8;
             strategy = "LNF";
             if (args.length > 0) {
                 printList = false;
@@ -107,7 +107,7 @@ public class RalloCloud {
                 NetworkTopologyPublic.mapNodes(dc, i);
             }
 
-            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 0); //Empty datacenter for nordunet
+            Datacenter dc = createDatacenter(labels.get(14), 0, 0, 0, 4000); //Empty datacenter for nordunet
             dcList.add(dc);
             NetworkTopologyPublic.mapNodes(dc, 14);
 
