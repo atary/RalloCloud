@@ -47,7 +47,8 @@ public class RalloCloud {
     public static String strategy;
     private static int vmRAM;
     private static int vmBW;
-
+    private static int vmNUM;
+    
     private enum topologyType {
 
         LINEAR, CIRCULAR, COMPLETE, STAR
@@ -58,7 +59,8 @@ public class RalloCloud {
         try {
             boolean printList = true; //Human readable?
             vmRAM = 1;
-            vmBW = 8;
+            vmBW = 1;
+            vmNUM = 2;
             strategy = "LNF";
             if (args.length > 0) {
                 printList = false;
@@ -67,6 +69,9 @@ public class RalloCloud {
                 }
                 if (args.length > 2) {
                     vmBW = Integer.parseInt(args[2]);
+                }
+                if (args.length > 3) {
+                    vmNUM = Integer.parseInt(args[3]);
                 }
                 strategy = args[0];
                 out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + ".txt", true)));
@@ -123,7 +128,8 @@ public class RalloCloud {
             }
 
             for (DatacenterBrokerStrategy bs : brokerSet) {
-                for (i = 0; i < bs.getPopulation() / 5; i++) {
+                int count = (bs.getPopulation() * vmNUM) / 10;
+                for (i = 0; i < count; i++) {
                     createVmGroup(bs, 3, 50, topologyType.LINEAR);
                     createVmGroup(bs, 2, 50, topologyType.COMPLETE);
                 }
