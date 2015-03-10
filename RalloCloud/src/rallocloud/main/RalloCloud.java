@@ -74,7 +74,7 @@ public class RalloCloud {
                     vmNUM = Integer.parseInt(args[3]);
                 }
                 strategy = args[0];
-                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + ".txt", true)));
+                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + "-" + vmNUM + ".txt", true)));
                 out.println(strategy);
             }
 
