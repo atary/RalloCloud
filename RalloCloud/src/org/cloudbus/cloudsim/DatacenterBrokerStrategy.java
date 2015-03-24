@@ -82,9 +82,17 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         getDatacenterCharacteristicsList().put(characteristics.getId(), characteristics);
         if (getDatacenterCharacteristicsList().size() == getDatacenterIdsList().size()) {
             //setDatacenterRequestedIdsList(new ArrayList<Integer>());
+            int vmCount = 0;
+            long startTime = System.nanoTime();
+            double startClock = CloudSim.clock();
             for (List<Integer> g : VmGroups.keySet()) {
                 createGroupVm(g, VmGroups.get(g));
+                vmCount += g.size();
             }
+            long endTime = System.nanoTime();
+            double endClock = CloudSim.clock();
+            Statistician.logCalcTime((endTime - startTime)/vmCount);
+            Statistician.logCalcClock((endClock - startClock)/(double)vmCount); 
         }
     }
 
@@ -100,7 +108,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         int datacenterId = data[0];
         int vmId = data[1];
         int result = data[2];
-        Statistician.trial();
+        Statistician.logTrial();
         if (result == CloudSimTags.TRUE) {
             getVmsToDatacentersMap().put(vmId, datacenterId);
             getVmsCreatedList().add(VmList.getById(getVmList(), vmId));
@@ -155,7 +163,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             }
         } else {
             Log.printLine(CloudSim.clock() + ": " + getName() + ": Creation of VM #" + vmId + " failed in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
-            Statistician.rejected();
+            Statistician.logRejected();
             if (CloudSim.clock() > 1000) {
                 if (out != null) {
                     //out.println(strategy);
@@ -241,7 +249,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = NetworkTopologyPublic.getDelay(dcId, dc.getId());
-            Statistician.addDelay(delay);
+            Statistician.logDelay(delay);
             if (delay > extraIn) {
                 extraIn = delay;
             }
@@ -250,7 +258,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             Vm vm = VmList.getById(getVmList(), i);
             int dcId = vm.getHost().getDatacenter().getId();
             double delay = NetworkTopologyPublic.getDelay(dc.getId(), dcId);
-            Statistician.addDelay(delay);
+            Statistician.logDelay(delay);
             if (delay > extraOut) {
                 extraOut = delay;
             }

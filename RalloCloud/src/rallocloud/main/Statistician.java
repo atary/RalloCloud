@@ -22,9 +22,19 @@ public class Statistician {
     private static int size = 0;
     private static double endTime;
     private static final ArrayList<Double> delays = new ArrayList<>();
+    private static final ArrayList<Long> calcTimes = new ArrayList<>();
+    private static final ArrayList<Double> calcClocks = new ArrayList<>();
 
-    public static void addDelay(double d) {
+    public static void logDelay(double d) {
         if(d>0) delays.add(d);
+    }
+    
+    public static void logCalcTime(long t) {
+        calcTimes.add(t);
+    }
+    
+    public static void logCalcClock(double c) {
+        calcClocks.add(c);
     }
 
     public static void setEndTime(double endTime) {
@@ -35,11 +45,11 @@ public class Statistician {
         return (double) RJR / size;
     }
 
-    public static void rejected() {
+    public static void logRejected() {
         RJR++;
     }
 
-    public static void trial() {
+    public static void logTrial() {
         size++;
     }
 
