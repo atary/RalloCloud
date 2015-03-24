@@ -33,7 +33,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     protected Map<List<Integer>, Double[][]> VmGroups;
 
     protected Map<List<Integer>, Double> GroupTimes;
-    
+
     private int population;
 
     public int getPopulation() {
@@ -144,13 +144,13 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             if (ready) {
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") is ready.");
                 Double[][] t = VmGroups.get(group);
-                if (allocateLinks(group, t)) {
-                    for (int v : group) {
-                        submitCloudlets(v, group, t);
-                    }
-                } else {
-                    Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") cannot be linked.");
+                //if (allocateLinks(group, t)) {
+                for (int v : group) {
+                    submitCloudlets(v, group, t);
                 }
+                //} else {
+                //    Log.printLine(CloudSim.clock() + ": " + getName() + ": Group of VM #" + vmId + " (" + group + ") cannot be linked.");
+                //}
 
             }
         } else {
@@ -213,7 +213,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
                 group = g;
             }
         }
-        deallocateLinks(group, VmGroups.get(group));
+        //deallocateLinks(group, VmGroups.get(group));
         sendNow(getVmsToDatacentersMap().get(vmId), CloudSimTags.VM_DESTROY, vm);
     }
 
@@ -309,13 +309,4 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
          return 0;
          }*/
     }
-
-    private boolean allocateLinks(List<Integer> g, Double[][] t) {
-        return true;
-    }
-
-    private void deallocateLinks(List<Integer> g, Double[][] t) {
-        return;
-    }
-
 }

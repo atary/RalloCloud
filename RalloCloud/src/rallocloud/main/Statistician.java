@@ -24,7 +24,7 @@ public class Statistician {
     private static final ArrayList<Double> delays = new ArrayList<>();
 
     public static void addDelay(double d) {
-        delays.add(d);
+        if(d>0) delays.add(d);
     }
 
     public static void setEndTime(double endTime) {
