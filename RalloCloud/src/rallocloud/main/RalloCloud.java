@@ -204,8 +204,8 @@ public class RalloCloud {
             broker.getAllVmList().add(virtualMachine);
 
             long length = 150;
-            long fileSize = 15;
-            long outputSize = 15;
+            long fileSize = 7;
+            long outputSize = 7;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
