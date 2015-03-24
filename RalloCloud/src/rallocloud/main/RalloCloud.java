@@ -389,6 +389,7 @@ public class RalloCloud {
             System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
             System.out.println("Total Cost (CST)\t\t: \t" + dft.format(CST));
             System.out.println("Average Cost (AVC)\t\t: \t" + dft.format(AVC / size));
+            System.out.println("Algorithm Calculation Time (ACT): \t" + Statistician.getACT() + "ns");
         } else {
             out.println(AUL / size);
             out.println(MUL);

@@ -30,7 +30,6 @@ public class Statistician {
     
     public static void logCalcTime(long t) {
         calcTimes.add(t);
-        System.out.println(t);
     }
 
     public static void setEndTime(double endTime) {
@@ -112,5 +111,13 @@ public class Statistician {
             }
         }
         return max;
+    }
+    
+    static long getACT(){
+        long total = 0;
+        for (long c : calcTimes) {
+            total += c;
+        }
+        return total / calcTimes.size();
     }
 }
