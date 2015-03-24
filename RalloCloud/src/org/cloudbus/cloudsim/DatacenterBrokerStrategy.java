@@ -84,15 +84,12 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             //setDatacenterRequestedIdsList(new ArrayList<Integer>());
             int vmCount = 0;
             long startTime = System.nanoTime();
-            double startClock = CloudSim.clock();
             for (List<Integer> g : VmGroups.keySet()) {
                 createGroupVm(g, VmGroups.get(g));
                 vmCount += g.size();
             }
             long endTime = System.nanoTime();
-            double endClock = CloudSim.clock();
             Statistician.logCalcTime((endTime - startTime)/vmCount);
-            Statistician.logCalcClock((endClock - startClock)/(double)vmCount); 
         }
     }
 

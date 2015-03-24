@@ -23,7 +23,6 @@ public class Statistician {
     private static double endTime;
     private static final ArrayList<Double> delays = new ArrayList<>();
     private static final ArrayList<Long> calcTimes = new ArrayList<>();
-    private static final ArrayList<Double> calcClocks = new ArrayList<>();
 
     public static void logDelay(double d) {
         if(d>0) delays.add(d);
@@ -31,10 +30,7 @@ public class Statistician {
     
     public static void logCalcTime(long t) {
         calcTimes.add(t);
-    }
-    
-    public static void logCalcClock(double c) {
-        calcClocks.add(c);
+        System.out.println(t);
     }
 
     public static void setEndTime(double endTime) {
