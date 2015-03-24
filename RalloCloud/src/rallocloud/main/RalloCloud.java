@@ -58,10 +58,10 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 1;
+            vmRAM = 8;
             vmBW = 1;
-            vmNUM = 2;
-            strategy = "LNF";
+            vmNUM = 4;
+            strategy = "TBF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {

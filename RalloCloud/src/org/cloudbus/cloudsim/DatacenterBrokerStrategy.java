@@ -36,6 +36,8 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     private int population;
 
+    private static ArrayList<Integer> printedClocks = new ArrayList<>();
+
     public int getPopulation() {
         return population;
     }
@@ -89,7 +91,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
                 vmCount += g.size();
             }
             long endTime = System.nanoTime();
-            Statistician.logCalcTime((endTime - startTime)/vmCount);
+            Statistician.logCalcTime((endTime - startTime) / vmCount);
         }
     }
 
@@ -101,6 +103,9 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     @Override
     protected void processVmCreate(SimEvent ev) {
+
+        printUtilization();
+
         int[] data = (int[]) ev.getData();
         int datacenterId = data[0];
         int vmId = data[1];
@@ -200,6 +205,9 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     @Override
     protected void processCloudletReturn(SimEvent ev) {
+
+        printUtilization();
+
         Cloudlet cloudlet = (Cloudlet) ev.getData();
         getCloudletReceivedList().add(cloudlet);
         Vm vm = VmList.getById(getVmsCreatedList(), cloudlet.getVmId());
@@ -313,5 +321,17 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         /*} else {
          return 0;
          }*/
+    }
+
+    private void printUtilization() {
+        if (printedClocks.contains((int)CloudSim.clock())) {
+            return;
+        }
+        printedClocks.add((int)CloudSim.clock());
+        System.out.print(" " + CloudSim.clock() + ": ");
+        for (Datacenter d : datacenterList) {
+            System.out.print(d.getHostList().get(0).getVmList().size() + " ");
+        }
+        System.out.println("");
     }
 }
