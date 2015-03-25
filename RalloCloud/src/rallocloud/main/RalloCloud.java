@@ -48,7 +48,7 @@ public class RalloCloud {
     private static int vmRAM;
     private static int vmBW;
     private static int vmNUM;
-    
+
     private enum topologyType {
 
         LINEAR, CIRCULAR, COMPLETE, STAR
@@ -58,10 +58,10 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 8;
-            vmBW = 1;
-            vmNUM = 4;
-            strategy = "TBF";
+            vmRAM = 2;
+            vmBW = 2;
+            vmNUM = 2;
+            strategy = "LFF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -271,8 +271,9 @@ public class RalloCloud {
         // In this example, it will have only one core.
         List<Pe> peList = new ArrayList<>();
 
-        // 3. Create PEs and add these into a list.
-        peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store Pe id and MIPS Rating
+        for (int i = 0; i < 8; i++) {
+            peList.add(new Pe(i, new PeProvisionerSimple(mips / 8)));
+        }
 
         //4. Create Host with its id and list of PEs and add them to the list of machines
         int hostId = 0;
@@ -284,7 +285,7 @@ public class RalloCloud {
                         new BwProvisionerNetworked(bw, -1),
                         storage,
                         peList,
-                        new VmSchedulerTimeShared(peList)
+                        new VmSchedulerSpaceShared(peList)
                 )
         ); // This is our machine
 

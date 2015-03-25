@@ -36,7 +36,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     private int population;
 
-    private static ArrayList<Integer> printedClocks = new ArrayList<>();
+    private static final ArrayList<Integer> printedClocks = new ArrayList<>();
 
     public int getPopulation() {
         return population;
@@ -324,7 +324,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     }
 
     private void printUtilization() {
-        if (printedClocks.contains((int) CloudSim.clock()) || true) {
+        if (printedClocks.contains((int) CloudSim.clock())) {
             return;
         }
         printedClocks.add((int) CloudSim.clock());
