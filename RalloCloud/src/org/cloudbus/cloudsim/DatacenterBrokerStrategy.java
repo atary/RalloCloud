@@ -324,10 +324,10 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     }
 
     private void printUtilization() {
-        if (printedClocks.contains((int)CloudSim.clock())) {
+        if (printedClocks.contains((int) CloudSim.clock()) || true) {
             return;
         }
-        printedClocks.add((int)CloudSim.clock());
+        printedClocks.add((int) CloudSim.clock());
         System.out.print(" " + CloudSim.clock() + ": ");
         for (Datacenter d : datacenterList) {
             System.out.print(d.getHostList().get(0).getVmList().size() + " ");
