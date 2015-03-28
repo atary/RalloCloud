@@ -123,13 +123,11 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             double ramUse = 0;
 
             for (int i = 0; i < dc.getHostList().size(); i++) {
-                ramCap = dc.getHostList().get(i).getRam();
+                ramCap += dc.getHostList().get(i).getRam();
             }
 
-            for (Vm v : AllVmList) { //vmList: individual utility based pricing - AllVmList: general utility based pricing
-                if (v.getHost() != null && v.getHost().getDatacenter().getId() == datacenterId) {
-                    ramUse += v.getRam();
-                }
+            for (Vm v : dc.getVmList()) { //vmList: individual utility based pricing - AllVmList: general utility based pricing
+                ramUse += v.getRam();
             }
 
             double util = ramUse / ramCap;
@@ -330,7 +328,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         printedClocks.add((int) CloudSim.clock());
         System.out.print(" " + CloudSim.clock() + ": ");
         for (Datacenter d : datacenterList) {
-            System.out.print(d.getHostList().get(0).getVmList().size() + " ");
+            System.out.print(d.getVmList().size() + " ");
         }
         System.out.println("");
     }
