@@ -58,7 +58,7 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 2;
+            vmRAM = 8;
             vmBW = 2;
             vmNUM = 2;
             strategy = "LFF";
@@ -203,9 +203,9 @@ public class RalloCloud {
             broker.getVmList().add(virtualMachine);
             broker.getAllVmList().add(virtualMachine);
 
-            long length = 150;
-            long fileSize = 7;
-            long outputSize = 7;
+            long length = 1500;
+            long fileSize = 70;
+            long outputSize = 70;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
@@ -271,8 +271,8 @@ public class RalloCloud {
         // In this example, it will have only one core.
         List<Pe> peList = new ArrayList<>();
 
-        for (int i = 0; i < 8; i++) {
-            peList.add(new Pe(i, new PeProvisionerSimple(mips / 8)));
+        for (int i = 0; i < 64; i++) {
+            peList.add(new Pe(i, new PeProvisionerSimple(mips)));
         }
 
         //4. Create Host with its id and list of PEs and add them to the list of machines
