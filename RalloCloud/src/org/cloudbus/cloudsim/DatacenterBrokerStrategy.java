@@ -68,7 +68,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
 
     public DatacenterBrokerStrategy(String name) throws Exception {
         super(name);
-        Log.disable();
+        //Log.disable();
         VmGroups = new HashMap<>();
         GroupTimes = new HashMap<>();
     }
