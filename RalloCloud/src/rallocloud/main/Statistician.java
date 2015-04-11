@@ -100,7 +100,7 @@ public class Statistician {
         for (double d : delays) {
             total += d;
         }
-        return total / delays.size();
+        return delays.isEmpty() ? 0 : total / delays.size();
     }
 
     static double getMDL() {

@@ -60,7 +60,7 @@ public class RalloCloud {
             boolean printList = true; //Human readable?
             vmRAM = 2;
             vmBW = 2;
-            vmNUM = 1;
+            vmNUM = 2;
             strategy = "LFF";
             if (args.length > 0) {
                 printList = false;
