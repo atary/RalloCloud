@@ -27,7 +27,6 @@ import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
@@ -60,8 +59,8 @@ public class RalloCloud {
             boolean printList = true; //Human readable?
             vmRAM = 2;
             vmBW = 2;
-            vmNUM = 2;
-            strategy = "LFF";
+            vmNUM = 1;
+            strategy = "LNF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -124,7 +123,7 @@ public class RalloCloud {
                 String name = "BROKER" + i;
                 i++;
                 labels.add(name);
-                createBroker(dcList, name, d.getId());
+                createBroker(dcList, name, d.getId(), printList);
             }
 
             for (DatacenterBrokerStrategy bs : brokerSet) {
@@ -204,8 +203,8 @@ public class RalloCloud {
             broker.getAllVmList().add(virtualMachine);
 
             long length = 1500;
-            long fileSize = 70;
-            long outputSize = 70;
+            long fileSize = 500;
+            long outputSize = 500;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
@@ -416,7 +415,7 @@ public class RalloCloud {
         }
     }
 
-    private static DatacenterBrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId) {
+    private static DatacenterBrokerStrategy createBroker(ArrayList<Datacenter> dcList, String name, int dcId, Boolean log) {
 
         try {
             DatacenterBrokerStrategy broker = null;
@@ -449,7 +448,10 @@ public class RalloCloud {
             }
 
             int[] pops = {-1, -1, 61, 81, 11, 30, 10, 6, 5, 23, 5, 10, 10, 9, 23, 8, 6};
-
+            
+            if(!log){
+                broker.disableLog();
+            }
             broker.setDatacenterList(dcList);
             NetworkTopologyPublic.addLink(dcId, broker.getId(), 10.0, 0.1);
 

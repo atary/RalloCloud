@@ -65,10 +65,13 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     public Map<List<Integer>, Double> getGroupTimes() {
         return GroupTimes;
     }
+    
+    public void disableLog(){
+        Log.disable();
+    }
 
     public DatacenterBrokerStrategy(String name) throws Exception {
         super(name);
-        //Log.disable();
         VmGroups = new HashMap<>();
         GroupTimes = new HashMap<>();
     }
@@ -104,7 +107,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     @Override
     protected void processVmCreate(SimEvent ev) {
 
-        printUtilization();
+        //printUtilization();
 
         int[] data = (int[]) ev.getData();
         int datacenterId = data[0];
@@ -204,7 +207,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
     @Override
     protected void processCloudletReturn(SimEvent ev) {
 
-        printUtilization();
+        //printUtilization();
 
         Cloudlet cloudlet = (Cloudlet) ev.getData();
         getCloudletReceivedList().add(cloudlet);

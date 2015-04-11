@@ -25,7 +25,7 @@ public class Statistician {
     private static final ArrayList<Long> calcTimes = new ArrayList<>();
 
     public static void logDelay(double d) {
-        if(d>0) delays.add(d);
+        delays.add(d);
     }
     
     public static void logCalcTime(long t) {
