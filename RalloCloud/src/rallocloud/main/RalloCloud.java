@@ -57,8 +57,8 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 2;
-            vmBW = 2;
+            vmRAM = 1;
+            vmBW = 1;
             vmNUM = 1;
             strategy = "LNF";
             if (args.length > 0) {
@@ -128,7 +128,9 @@ public class RalloCloud {
 
             for (DatacenterBrokerStrategy bs : brokerSet) {
                 int count = (bs.getPopulation() * vmNUM) / 10;
+                count = count == 0 ? 1 : count;
                 for (i = 0; i < count; i++) {
+                    System.out.println(count);
                     createVmGroup(bs, 3, 50, topologyType.LINEAR);
                     createVmGroup(bs, 2, 50, topologyType.COMPLETE);
                 }
@@ -448,8 +450,8 @@ public class RalloCloud {
             }
 
             int[] pops = {-1, -1, 61, 81, 11, 30, 10, 6, 5, 23, 5, 10, 10, 9, 23, 8, 6};
-            
-            if(!log){
+
+            if (!log) {
                 broker.disableLog();
             }
             broker.setDatacenterList(dcList);
