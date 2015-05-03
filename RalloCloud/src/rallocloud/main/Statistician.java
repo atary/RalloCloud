@@ -23,11 +23,16 @@ public class Statistician {
     private static double endTime;
     private static final ArrayList<Double> delays = new ArrayList<>();
     private static final ArrayList<Long> calcTimes = new ArrayList<>();
+    private static long MIPS = 0;
+
+    public static void addMIPS(long m) {
+        MIPS += m;
+    }
 
     public static void logDelay(double d) {
         delays.add(d);
     }
-    
+
     public static void logCalcTime(long t) {
         calcTimes.add(t);
     }
@@ -87,15 +92,11 @@ public class Statistician {
         return Math.sqrt(LDB / dcUtil.size());
     }
 
-    static double getTRP(List<Cloudlet> clList) {
-        double mips = 0;
-        for (Cloudlet c : clList) {
-            mips += c.getCloudletLength();
-        }
-        return mips / endTime;
+    public static double getTRP() {
+        return MIPS / endTime;
     }
 
-    static double getADL() {
+    public static double getADL() {
         double total = 0;
         for (double d : delays) {
             total += d;
@@ -103,7 +104,7 @@ public class Statistician {
         return delays.isEmpty() ? 0 : total / delays.size();
     }
 
-    static double getMDL() {
+    public static double getMDL() {
         double max = 0;
         for (double d : delays) {
             if (d > max) {
@@ -112,8 +113,8 @@ public class Statistician {
         }
         return max;
     }
-    
-    static long getACT(){
+
+    public static long getACT() {
         long total = 0;
         for (long c : calcTimes) {
             total += c;

@@ -169,7 +169,6 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
             Statistician.logRejected();
             if (CloudSim.clock() > 1000) {
                 if (out != null) {
-                    //out.println(strategy);
                     for (int i = 0; i < 13; i++) {
                         out.println("");
                     }
@@ -190,6 +189,7 @@ public abstract class DatacenterBrokerStrategy extends DatacenterBroker {
         Vm vm = VmList.getById(getVmsCreatedList(), vmId);
         for (Cloudlet cloudlet : getCloudletList()) {
             if (cloudlet.getVmId() == vmId) {
+                Statistician.addMIPS(cloudlet.getCloudletLength());
                 cloudlet.setCloudletLength(cloudlet.getCloudletLength() + calculateExtraLength(cloudlet, vmId, group, top));
                 Log.printLine(CloudSim.clock() + ": " + getName() + ": Sending cloudlet " + cloudlet.getCloudletId() + " to VM #" + vm.getId() + " in " + vm.getHost().getDatacenter().getName() + " (" + vm.getHost().getDatacenter().getId() + ")");
                 sendNow(getVmsToDatacentersMap().get(vm.getId()), CloudSimTags.CLOUDLET_SUBMIT, cloudlet);

@@ -57,10 +57,10 @@ public class RalloCloud {
 
         try {
             boolean printList = false; //Human readable?
-            vmRAM = 1;
-            vmBW = 1;
-            vmNUM = 1;
-            strategy = "LNF";
+            vmRAM = 2;
+            vmBW = 2;
+            vmNUM = 6;
+            strategy = "LFF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -158,11 +158,11 @@ public class RalloCloud {
 
             System.out.println("");
             printCloudletList(clList, printList);
-            if (!printList) { //FIX
+            if (printList) {
                 DecimalFormat dft = new DecimalFormat("###.##");
                 System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
                 System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
-                //printVmList(VmsToDatacentersMap, labels);
+                printVmList(VmsToDatacentersMap, labels);
             } else {
                 out.println(Statistician.getDSF(clSepList));
                 out.println(Statistician.getLDB(clList, dcList));
@@ -378,7 +378,7 @@ public class RalloCloud {
                 MUL = cloudlet.getExecStartTime();
             }
         }
-        if (!list) { //FIX
+        if (list) {
             System.out.println("\n=========== METRICS ===========");
             System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
             System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
@@ -386,7 +386,7 @@ public class RalloCloud {
             System.out.println("Maximum Inter-DC Latency (MDL)\t: \t" + dft.format(Statistician.getMDL()) + "s");
             System.out.println("Job Run Time (JRT)\t\t: \t" + dft.format(JRT / size) + "s");
             System.out.println("Job Completion Time (JCT)\t: \t" + dft.format(JCT / size) + "s");
-            System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP(clList)) + " MIPS");
+            System.out.println("Throughput (TRP)\t\t: \t" + dft.format(Statistician.getTRP()) + " MIPS");
             System.out.println("Rejection Rate (RJR)\t\t: \t" + dft.format(Statistician.getRJR() * 100) + "%");
             System.out.println("Total Cost (CST)\t\t: \t" + dft.format(CST));
             System.out.println("Average Cost (AVC)\t\t: \t" + dft.format(AVC / size));
@@ -398,7 +398,7 @@ public class RalloCloud {
             out.println(Statistician.getMDL());
             out.println(JRT / size);
             out.println(JCT / size);
-            out.println(Statistician.getTRP(clList));
+            out.println(Statistician.getTRP());
             out.println(Statistician.getRJR() * 100);
             out.println(CST);
             out.println(AVC / size);
