@@ -47,6 +47,7 @@ public class RalloCloud {
     private static int vmRAM;
     private static int vmBW;
     private static int vmNUM;
+    private static int vmNW;
 
     private enum topologyType {
 
@@ -59,7 +60,8 @@ public class RalloCloud {
             boolean printList = true; //Human readable?
             vmRAM = 4;
             vmBW = 4;
-            vmNUM = 1;
+            vmNUM = 4;
+            vmNW = 4;
             strategy = "LFF";
             if (args.length > 0) {
                 printList = false;
@@ -72,8 +74,11 @@ public class RalloCloud {
                 if (args.length > 3) {
                     vmNUM = Integer.parseInt(args[3]);
                 }
+                if (args.length > 4) {
+                    vmNW = Integer.parseInt(args[4]);
+                }
                 strategy = args[0];
-                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + "-" + vmNUM + ".txt", true)));
+                out = new PrintWriter(new BufferedWriter(new FileWriter("dist/out/" + vmRAM + "-" + vmBW + "-" + vmNUM + "-" + vmNW + ".txt", true)));
                 out.println(strategy);
             }
 
@@ -206,8 +211,8 @@ public class RalloCloud {
             broker.getAllVmList().add(virtualMachine);
 
             long length = 1500;
-            long fileSize = 500;
-            long outputSize = 500;
+            long fileSize = 250 * vmNW;
+            long outputSize = 250 * vmNW;
             UtilizationModel utilizationModel = new UtilizationModelFull();
 
             Cloudlet application = new Cloudlet(cloudletid, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
