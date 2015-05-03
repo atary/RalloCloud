@@ -62,7 +62,7 @@ public class RalloCloud {
             vmBW = 4;
             vmNUM = 4;
             vmNW = 2;
-            strategy = "TBF";
+            strategy = "SNW";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {

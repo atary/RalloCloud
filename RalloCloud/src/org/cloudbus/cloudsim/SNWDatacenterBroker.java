@@ -78,19 +78,21 @@ public class SNWDatacenterBroker extends DatacenterBrokerStrategy {
 
     @Override
     protected void createGroupVm(List<Integer> g, Double[][] t) {
-        ArrayList<Integer> sent = new ArrayList<>();
+        ArrayList<Integer> sentVM = new ArrayList<>();
+        ArrayList<Integer> requestedDC = new ArrayList<>();
         int vmId = g.get(0);
-        sent.add(0);
         Vm vm = VmList.getById(getVmList(), vmId);
         Random randomGenerator = new Random();
         int dcId = datacenterIdsList.get(randomGenerator.nextInt(datacenterIdsList.size()));
+        sentVM.add(0);
+        requestedDC.add(dcId);
         setVmsRequested(getVmsRequested() + 1);
         Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vmId + " in " + CloudSim.getEntityName(dcId) + " (" + dcId + ")");
         sendAt(dcId, getVmTime(vmId), CloudSimTags.VM_CREATE_ACK, vm);
-        recursiveCreateVm(vmId, g, t, sent);
+        recursiveCreateVm(vmId, g, t, sentVM, requestedDC);
     }
 
-    private void recursiveCreateVm(int vmId, List<Integer> g, Double[][] t, ArrayList<Integer> sent) {
+    private void recursiveCreateVm(int vmId, List<Integer> g, Double[][] t, ArrayList<Integer> sent, ArrayList<Integer> requested) {
         Double[][] bwMatrix = NetworkTopologyPublic.getBwMatrix();
         for (int i = 0; i < t.length; i++) {
             if (t[vmId][i] > 0) {
@@ -98,14 +100,18 @@ public class SNWDatacenterBroker extends DatacenterBrokerStrategy {
                     continue;
                 }
                 for (int j = 0; j < bwMatrix.length; j++) {
+                    if(requested.contains(j+2)){
+                        continue;
+                    }
                     if (bwMatrix[vmId][j] > 0) {
-                        sent.add(i);
                         int datacenterId = j + 2;
+                        sent.add(i);
+                        requested.add(datacenterId);
                         Vm vm = VmList.getById(getVmList(), g.get(i));
                         setVmsRequested(getVmsRequested() + 1);
                         Log.printLine(CloudSim.clock() + ": " + getName() + ": Trying to Create VM #" + vm.getId() + " in " + CloudSim.getEntityName(datacenterId) + " (" + datacenterId + ")");
                         sendAt(datacenterId, GroupTimes.get(g), CloudSimTags.VM_CREATE_ACK, vm);
-                        recursiveCreateVm(vmId, g, t, sent);
+                        recursiveCreateVm(vmId, g, t, sent, requested);
                         break;
                     }
                 }
