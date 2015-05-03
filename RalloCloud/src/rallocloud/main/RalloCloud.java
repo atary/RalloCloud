@@ -57,9 +57,9 @@ public class RalloCloud {
 
         try {
             boolean printList = true; //Human readable?
-            vmRAM = 2;
-            vmBW = 2;
-            vmNUM = 6;
+            vmRAM = 4;
+            vmBW = 4;
+            vmNUM = 1;
             strategy = "LFF";
             if (args.length > 0) {
                 printList = false;
@@ -130,8 +130,8 @@ public class RalloCloud {
                 int count = (bs.getPopulation() * vmNUM) / 10;
                 count = count == 0 ? 1 : count;
                 for (i = 0; i < count; i++) {
-                    createVmGroup(bs, 3, 50, topologyType.LINEAR);
-                    createVmGroup(bs, 2, 50, topologyType.COMPLETE);
+                    createVmGroup(bs, 3, 200, topologyType.LINEAR);
+                    createVmGroup(bs, 2, 200, topologyType.COMPLETE);
                 }
             }
 
@@ -169,6 +169,8 @@ public class RalloCloud {
                 out.println("");
                 out.close();
             }
+            System.out.println("");
+            System.out.println(Statistician.getEndTime());
             System.out.println("");
 
         } catch (Exception e) {

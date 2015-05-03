@@ -40,6 +40,10 @@ public class Statistician {
     public static void setEndTime(double endTime) {
         Statistician.endTime = endTime;
     }
+    
+    public static double getEndTime() {
+        return endTime;
+    }
 
     public static double getRJR() {
         return (double) RJR / size;
