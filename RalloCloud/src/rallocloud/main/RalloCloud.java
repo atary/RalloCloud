@@ -56,7 +56,7 @@ public class RalloCloud {
     public static void main(String[] args) {
 
         try {
-            boolean printList = true; //Human readable?
+            boolean printList = false; //Human readable?
             vmRAM = 1;
             vmBW = 1;
             vmNUM = 1;
@@ -130,7 +130,6 @@ public class RalloCloud {
                 int count = (bs.getPopulation() * vmNUM) / 10;
                 count = count == 0 ? 1 : count;
                 for (i = 0; i < count; i++) {
-                    System.out.println(count);
                     createVmGroup(bs, 3, 50, topologyType.LINEAR);
                     createVmGroup(bs, 2, 50, topologyType.COMPLETE);
                 }
@@ -159,11 +158,11 @@ public class RalloCloud {
 
             System.out.println("");
             printCloudletList(clList, printList);
-            if (printList) {
+            if (!printList) { //FIX
                 DecimalFormat dft = new DecimalFormat("###.##");
                 System.out.println("Distribution Factor (DSF)\t: \t" + dft.format(Statistician.getDSF(clSepList)));
                 System.out.println("Load Balance (LDB)\t\t: \t" + dft.format(Statistician.getLDB(clList, dcList)));
-                printVmList(VmsToDatacentersMap, labels);
+                //printVmList(VmsToDatacentersMap, labels);
             } else {
                 out.println(Statistician.getDSF(clSepList));
                 out.println(Statistician.getLDB(clList, dcList));
@@ -379,7 +378,7 @@ public class RalloCloud {
                 MUL = cloudlet.getExecStartTime();
             }
         }
-        if (list) {
+        if (!list) { //FIX
             System.out.println("\n=========== METRICS ===========");
             System.out.println("Average User Latency (AUL)\t: \t" + dft.format(AUL / size) + "s");
             System.out.println("Maximum User Latency (MUL)\t: \t" + dft.format(MUL) + "s");
