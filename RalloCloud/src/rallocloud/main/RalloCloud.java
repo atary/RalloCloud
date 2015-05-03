@@ -61,8 +61,8 @@ public class RalloCloud {
             vmRAM = 4;
             vmBW = 4;
             vmNUM = 4;
-            vmNW = 4;
-            strategy = "LFF";
+            vmNW = 2;
+            strategy = "TBF";
             if (args.length > 0) {
                 printList = false;
                 if (args.length > 1) {
@@ -446,6 +446,9 @@ public class RalloCloud {
                     break;
                 case "RAN":
                     broker = new RANDatacenterBroker(name);
+                    break;
+                case "SNW":
+                    broker = new TBFDatacenterBroker(name);
                     break;
                 case "TBF":
                     broker = new TBFDatacenterBroker(name);
