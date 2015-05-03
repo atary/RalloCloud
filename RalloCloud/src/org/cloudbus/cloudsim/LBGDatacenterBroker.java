@@ -6,6 +6,7 @@
 package org.cloudbus.cloudsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class LBGDatacenterBroker extends DatacenterBrokerStrategy {
         Vm vm = VmList.getById(getVmList(), vmId);
         double minUtil = Double.MAX_VALUE;
         int dcId = -1;
+        Collections.shuffle(datacenterIdsList);
         for (int di : datacenterIdsList) {
             if (requestedDCs.contains(di)) {
                 continue;
