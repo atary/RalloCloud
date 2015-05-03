@@ -56,7 +56,7 @@ public class RalloCloud {
     public static void main(String[] args) {
 
         try {
-            boolean printList = false; //Human readable?
+            boolean printList = true; //Human readable?
             vmRAM = 2;
             vmBW = 2;
             vmNUM = 6;
